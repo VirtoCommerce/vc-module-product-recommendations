@@ -1,4 +1,5 @@
 # Product recommendations built using Azure Machine Learning
+Product recommendations built using Azure Machine Learning. Automatically recommend items on your product page. Provide recommendations unique to customer and personalize their experience.
 
 ## Personalized recommendations
 Use the purchase history of a particular customer to provide recommendations unique to that customer and personalize their experience.
