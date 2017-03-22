@@ -29,5 +29,16 @@
   <scripts>
     <directory virtualPath="$/Scripts" searchPattern="*.js" searchSubdirectories="true" />
   </scripts>
+
+  <settings>
+    <group name="Recommendations|General">
+      <setting>
+        <name>ProductRecommendations.ApiKey</name>
+        <valueType>string</valueType>
+        <title>Recommendations API Key</title>
+        <description>Cognitive Services account key</description>
+      </setting>
+    </group>
+  </settings>
   
 </module>
