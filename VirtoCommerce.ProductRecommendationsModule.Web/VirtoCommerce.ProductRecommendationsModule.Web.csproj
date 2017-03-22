@@ -96,6 +96,7 @@
   <ItemGroup>
     <Content Include="module.manifest" />
     <Content Include="packages.config" />
+    <Content Include="Localizations\en.VirtoCommerce.ProductRecommendations.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -105,6 +106,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\logo.png" />
+    <Content Include="Scripts\blades\recommendations-configuration.js" />
+    <Content Include="Scripts\blades\recommendations-configuration.tpl.html" />
+    <Content Include="Scripts\productRecommendations.js" />
+    <Content Include="Scripts\widgets\store-recommendations-widget.js" />
+    <Content Include="Scripts\widgets\store-recommendations-widget.tpl.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -114,9 +120,7 @@
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,0 +1,15 @@
+﻿{
+  "productRecommendationsModule": {
+    "widgets": {
+      "storeRecommendations": {
+        "title": "Recommendations"
+      }
+    },
+    "blades": {
+      "recommendationsConfiguration": {
+        "title": "Product recommendations",
+        "subtitle": "Configure and start machine learning for recommendations"
+      }
+    } 
+  }
+}
