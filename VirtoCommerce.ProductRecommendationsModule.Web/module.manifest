@@ -31,7 +31,7 @@
   </scripts>
 
   <settings>
-    <group name="Recommendations|General">
+    <group name="Recommendations">
       <setting>
         <name>ProductRecommendations.ApiKey</name>
         <valueType>string</valueType>
