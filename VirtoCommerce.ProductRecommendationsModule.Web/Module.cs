@@ -2,12 +2,12 @@
 using Microsoft.Practices.Unity;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.ProductRecommendationsModule.Data.Services;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web
 {
     public class Module : ModuleBase
     {
-
         private readonly IUnityContainer _container;
 
         public Module(IUnityContainer container)
@@ -17,6 +17,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web
 
         public override void Initialize()
         {
+            _container.RegisterType<IUserEventService, UserEventService>();
+            _container.RegisterType<ICognitiveRecommendationsService, CognitiveRecommendationsService>();
         }
 
         public override void PostInitialize()
