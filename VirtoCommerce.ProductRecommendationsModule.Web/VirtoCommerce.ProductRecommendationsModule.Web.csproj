@@ -125,9 +125,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\logo.png" />
-    <Content Include="Scripts\blades\recommendations-configuration.js" />
-    <Content Include="Scripts\blades\recommendations-configuration.tpl.html" />
+    <Content Include="Scripts\blades\configuration.tpl.html" />
+    <Content Include="Scripts\blades\export.js" />
+    <Content Include="Scripts\blades\export.tpl.html" />
+    <Content Include="Scripts\blades\configuration.js" />
     <Content Include="Scripts\productRecommendations.js" />
+    <Content Include="Scripts\resources\recommendations.js" />
     <Content Include="Scripts\widgets\store-recommendations-widget.js" />
     <Content Include="Scripts\widgets\store-recommendations-widget.tpl.html" />
     <Content Include="Web.config">

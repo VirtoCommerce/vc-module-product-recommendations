@@ -5,10 +5,11 @@
     $scope.openBlade = function () {
         var newBlade = {
             id: 'recommendationsConfiguration',
-            title: 'productRecommendationsModule.blades.recommendationsConfiguration.title',
-            subtitle: 'productRecommendationsModule.blades.recommendationsConfiguration.subtitle',
-            controller: 'virtoCommerce.productRecommendationsModule.recommendationsConfigurationController',
-            template: 'Modules/$(VirtoCommerce.ProductRecommendations)/Scripts/blades/recommendations-configuration.tpl.html'
+            title: 'productRecommendationsModule.blades.configuration.title',
+            subtitle: 'productRecommendationsModule.blades.configuration.subtitle',
+            controller: 'virtoCommerce.productRecommendationsModule.configurationController',
+            template: 'Modules/$(VirtoCommerce.ProductRecommendations)/Scripts/blades/configuration.tpl.html',
+            store: blade.currentEntity
         };
         bladeNavigationService.showBlade(newBlade, blade);
     }

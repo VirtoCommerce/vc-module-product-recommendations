@@ -6,9 +6,24 @@
       }
     },
     "blades": {
-      "recommendationsConfiguration": {
+      "configuration": {
         "title": "Product recommendations",
-        "subtitle": "Configure and start machine learning for recommendations"
+        "subtitle": "Configure and start machine learning for recommendations",
+        "labels": {
+          "export-catalog": "Export catalog"
+        }
+      },
+      "catalogExport": {
+        "title": "Catalog to csv export",
+        "labels": {
+          "start": "Start",
+          "end": "End",
+          "total": "Total count",
+          "processed": "Processed count",
+          "error-count": "Error count",
+          "errors": "Errors",
+          "download-url": "Download Url"
+        }
       }
     } 
   }

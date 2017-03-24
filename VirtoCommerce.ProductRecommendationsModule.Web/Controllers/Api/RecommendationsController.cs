@@ -30,7 +30,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
 
         public RecommendationsController(IPushNotificationManager pushNotifier,
             IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver,
-            ICatalogService catalogService, CsvCatalogExporter csvExporter, IUserNameResolver userNameResolver, IUserEventService userEventService)
+            ICatalogService catalogService, CsvCatalogExporter csvExporter,
+            IUserNameResolver userNameResolver, IUserEventService userEventService)
         {
             _pushNotifier = pushNotifier;
             _blobStorageProvider = blobStorageProvider;
@@ -67,14 +68,14 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        [HttpPost]
-        [Route("catalogs/{catalogid}/export")]
+        [HttpGet]
+        [Route("catalogs/{catalogId}/export")]
         [ResponseType(typeof(CatalogExportPushNotification))]
         public IHttpActionResult CatalogExport(string catalogId)
         {
             var notification = new CatalogExportPushNotification(_userNameResolver.GetCurrentUserName())
             {
-                Title = "Catalog export prepared for recommendations task",
+                Title = "Catalog prepared for recommendations task export",
                 Description = "Starting export..."
             };
             _pushNotifier.Upsert(notification);
@@ -84,7 +85,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             return Ok(notification);
         }
 
-        private void CatalogExportBackground(string catalogId, CatalogExportPushNotification notification)
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public void CatalogExportBackground(string catalogId, CatalogExportPushNotification notification)
         {
             var catalog = _catalogService.GetById(catalogId);
             if (catalog == null)
@@ -106,8 +108,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                 {
                     _csvExporter.DoExport(stream, catalogId, progressCallback);
 
-                    stream.Position = 0;
-                    var blobRelativeUrl = "temp/Catalog-" + catalog.Name + "-prepared-for-recommendations-export.csv";
+                    stream.Seek(0, SeekOrigin.Begin);
+                    // Recommendations API UI has a limit to maximum file name length. The limit is 50 symbols
+                    var blobRelativeUrl = "temp/catalog-prepared-for-recommendations-export.csv";
                     //Upload result csv to blob storage
                     using (var blobStream = _blobStorageProvider.OpenWrite(blobRelativeUrl))
                     {
@@ -115,7 +118,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                     }
                     //Get a download url
                     notification.DownloadUrl = _blobUrlResolver.GetAbsoluteUrl(blobRelativeUrl);
-                    notification.Description = "Export finished";
                 }
                 catch (Exception ex)
                 {
@@ -125,6 +127,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                 }
                 finally
                 {
+                    notification.Description = "Export finished";
                     notification.Finished = DateTime.UtcNow;
                     _pushNotifier.Upsert(notification);
                 }
