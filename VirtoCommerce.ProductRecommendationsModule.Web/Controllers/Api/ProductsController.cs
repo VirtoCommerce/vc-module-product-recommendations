@@ -10,7 +10,7 @@ using System.Web.Http.ModelBinding;
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
 {
     [RoutePrefix("api/recomendations")]
-    public class RecomendationsController : ApiController
+    public class ProductsController : ApiController
     {
         [HttpGet]
         [Route("")]
