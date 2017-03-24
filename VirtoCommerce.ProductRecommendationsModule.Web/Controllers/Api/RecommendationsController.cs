@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Hangfire;
@@ -8,6 +9,8 @@ using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.ProductRecommendationsModule.Data.Model;
+using VirtoCommerce.ProductRecommendationsModule.Data.Services;
 using VirtoCommerce.ProductRecommendationsModule.Web.Export;
 using VirtoCommerce.ProductRecommendationsModule.Web.Model;
 
@@ -23,10 +26,11 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         private readonly ICatalogService _catalogService;
         private readonly CsvCatalogExporter _csvExporter;
         private readonly IUserNameResolver _userNameResolver;
+        private readonly IUserEventService _userEventService;
 
         public RecommendationsController(IPushNotificationManager pushNotifier,
             IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver,
-            ICatalogService catalogService, CsvCatalogExporter csvExporter, IUserNameResolver userNameResolver)
+            ICatalogService catalogService, CsvCatalogExporter csvExporter, IUserNameResolver userNameResolver, IUserEventService userEventService)
         {
             _pushNotifier = pushNotifier;
             _blobStorageProvider = blobStorageProvider;
@@ -34,6 +38,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             _catalogService = catalogService;
             _csvExporter = csvExporter;
             _userNameResolver = userNameResolver;
+            _userEventService = userEventService;
         }
         
         [HttpGet]
@@ -50,6 +55,16 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             };
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("events")]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult AddEvent(UserEvent userEvent)
+        {
+            _userEventService.AddEvent(userEvent);
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpPost]

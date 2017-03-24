@@ -145,7 +145,12 @@
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\VirtoCommerce.ProductRecommendationsModule.Data\VirtoCommerce.ProductRecommendationsModule.Data.csproj">
+      <Project>{79F7A7A3-11F5-4AD6-B572-DD0313047574}</Project>
+      <Name>VirtoCommerce.ProductRecommendationsModule.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
