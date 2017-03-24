@@ -4,31 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VirtoCommerce.ProductRecommendationsModule.Data.Model;
+using VirtoCommerce.ProductRecommendationsModule.Data.Repositories;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 {
     public class UserEventService: IUserEventService
     {
+        private readonly Func<IUserEventRepository> _userEventRepositoryFactory;
+
+        public UserEventService(Func<IUserEventRepository> userEventRepositoryFactory)
+        {
+            _userEventRepositoryFactory = userEventRepositoryFactory;
+        }
+
         public void AddEvent(UserEvent userEvent)
         {
-            //todo
+            using (var repository = _userEventRepositoryFactory())
+            {
+                repository.Add(userEvent);
+                repository.UnitOfWork.Commit();
+            }
         }
 
         public UserEvent[] GetUserEvents(SearchUserEventCriteria criteria)
         {
-            //todo
-
-            return new UserEvent[]
+            using (var repository = _userEventRepositoryFactory())
             {
-                new UserEvent()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    UserId = Guid.NewGuid().ToString(),
-                    ItemId = Guid.NewGuid().ToString(),
-                    EventType = "Click",
-                    Created = DateTime.UtcNow
-                }
-            };
+                return repository.GetUserEvents(criteria.CreatedFrom, criteria.CreatedTo);
+            }
         }
     }
 }

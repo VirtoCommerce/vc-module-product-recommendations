@@ -8,8 +8,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
 {
     public class SearchUserEventCriteria
     {
-        public DateTime? CreatedFrom { get; set; }
+        public DateTime CreatedFrom { get; set; }
 
-        public DateTime? CreatedTo { get; set; }
+        public DateTime CreatedTo { get; set; }
     }
 }
