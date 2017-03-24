@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.ProductRecomm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.ProductRecommendationsModule.Test", "VirtoCommerce.ProductRecommendationsModule.Test\VirtoCommerce.ProductRecommendationsModule.Test.csproj", "{A744F87C-57A8-4020-9EB8-9050B08103A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.ProductRecommendationsModule.Data", "VirtoCommerce.ProductRecommendationsModule.Data\VirtoCommerce.ProductRecommendationsModule.Data.csproj", "{79F7A7A3-11F5-4AD6-B572-DD0313047574}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A744F87C-57A8-4020-9EB8-9050B08103A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A744F87C-57A8-4020-9EB8-9050B08103A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A744F87C-57A8-4020-9EB8-9050B08103A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79F7A7A3-11F5-4AD6-B572-DD0313047574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79F7A7A3-11F5-4AD6-B572-DD0313047574}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79F7A7A3-11F5-4AD6-B572-DD0313047574}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79F7A7A3-11F5-4AD6-B572-DD0313047574}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
