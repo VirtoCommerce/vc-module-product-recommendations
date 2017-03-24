@@ -39,9 +39,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 
                 csvWriter.Configuration.Delimiter = ";";
 
-                //Write header
-                csvWriter.WriteHeader<CsvProduct>();
-
                 prodgressInfo.TotalCount = products.Count;
                 var notifyProductSizeLimit = 50;
                 var counter = 0;

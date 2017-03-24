@@ -10,7 +10,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Model
     {
         public CatalogExportPushNotification(string creator) : base(creator)
         {
-            NotifyType = "CatalogCvsExportPrepatedForRecommendations";
+            NotifyType = "CatalogPrepatedForRecommendationsCsvExport";
             Errors = new List<string>();
         }
 

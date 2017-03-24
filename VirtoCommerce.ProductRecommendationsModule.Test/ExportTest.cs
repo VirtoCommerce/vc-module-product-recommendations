@@ -83,7 +83,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
         {
             var csvFormat = "{0};";
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("Id;Sku;CategoryCode");
             var appendProduct = new Action<CatalogProduct>(product =>
             {
                 stringBuilder.AppendFormat(csvFormat, product.Id);

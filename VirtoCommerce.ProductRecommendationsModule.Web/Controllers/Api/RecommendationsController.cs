@@ -9,6 +9,7 @@ using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.ProductRecommendationsModule.Data.Model;
 using VirtoCommerce.ProductRecommendationsModule.Data.Services;
 using VirtoCommerce.ProductRecommendationsModule.Web.Export;
@@ -110,7 +111,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
 
                     stream.Seek(0, SeekOrigin.Begin);
                     // Recommendations API UI has a limit to maximum file name length. The limit is 50 symbols
-                    var blobRelativeUrl = "temp/catalog-prepared-for-recommendations-export.csv";
+                    var blobRelativeUrl = "temp/" + catalog.Name + ".csv";
                     //Upload result csv to blob storage
                     using (var blobStream = _blobStorageProvider.OpenWrite(blobRelativeUrl))
                     {
@@ -122,8 +123,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                 catch (Exception ex)
                 {
                     notification.Description = "Export failed";
-                    // TODO: Replace with ex.ExpandExceptionMessage() if we will use VirtoCommerce.Platform.Data
-                    notification.Errors.Add(ex.ToString());
+                    notification.Errors.Add(ex.ExpandExceptionMessage());
                 }
                 finally
                 {

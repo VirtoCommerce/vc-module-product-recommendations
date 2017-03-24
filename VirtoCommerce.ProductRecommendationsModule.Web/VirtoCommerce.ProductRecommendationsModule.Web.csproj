@@ -157,6 +157,8 @@
     <Content Include="Scripts\blades\export.js" />
     <Content Include="Scripts\blades\export.tpl.html" />
     <Content Include="Scripts\blades\configuration.js" />
+    <Content Include="Scripts\blades\notifications\historyExport.tpl.html" />
+    <Content Include="Scripts\blades\notifications\menuExport.tpl.html" />
     <Content Include="Scripts\productRecommendations.js" />
     <Content Include="Scripts\resources\recommendations.js" />
     <Content Include="Scripts\widgets\store-recommendations-widget.js" />
