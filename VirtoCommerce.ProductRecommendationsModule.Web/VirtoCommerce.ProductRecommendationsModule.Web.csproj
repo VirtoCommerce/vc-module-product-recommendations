@@ -115,6 +115,7 @@
     </Content>
     <Content Include="Localizations\en.VirtoCommerce.ProductRecommendations.json" />
     <Content Include="module.ignore" />
+    <Content Include="app.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
