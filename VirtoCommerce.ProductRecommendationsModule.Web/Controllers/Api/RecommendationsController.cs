@@ -1,0 +1,103 @@
+﻿using System;
+using System.IO;
+using System.Web.Http;
+using System.Web.Http.Description;
+using Hangfire;
+using VirtoCommerce.Domain.Catalog.Services;
+using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.PushNotifications;
+using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.ProductRecommendationsModule.Web.Export;
+using VirtoCommerce.ProductRecommendationsModule.Web.Model;
+
+namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
+{
+    [RoutePrefix("api/platform/recommendations")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public class RecommendationsController: ApiController
+    {
+        private readonly IPushNotificationManager _pushNotifier;
+        private readonly IBlobStorageProvider _blobStorageProvider;
+        private readonly IBlobUrlResolver _blobUrlResolver;
+        private readonly ICatalogService _catalogService;
+        private readonly CsvCatalogExporter _csvExporter;
+        private readonly IUserNameResolver _userNameResolver;
+
+        public RecommendationsController(IPushNotificationManager pushNotifier,
+            IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver,
+            ICatalogService catalogService, CsvCatalogExporter csvExporter, IUserNameResolver userNameResolver)
+        {
+            _pushNotifier = pushNotifier;
+            _blobStorageProvider = blobStorageProvider;
+            _blobUrlResolver = blobUrlResolver;
+            _catalogService = catalogService;
+            _csvExporter = csvExporter;
+            _userNameResolver = userNameResolver;
+        }
+
+        [HttpPost]
+        [Route("catalogs/{catalogid}/export")]
+        [ResponseType(typeof(CatalogExportPushNotification))]
+        public IHttpActionResult CatalogExport(string catalogId)
+        {
+            var notification = new CatalogExportPushNotification(_userNameResolver.GetCurrentUserName())
+            {
+                Title = "Catalog export prepared for recommendations task",
+                Description = "Starting export..."
+            };
+            _pushNotifier.Upsert(notification);
+
+            BackgroundJob.Enqueue(() => CatalogExportBackground(catalogId, notification));
+
+            return Ok(notification);
+        }
+
+        private void CatalogExportBackground(string catalogId, CatalogExportPushNotification notification)
+        {
+            var catalog = _catalogService.GetById(catalogId);
+            if (catalog == null)
+            {
+                throw new NullReferenceException("catalog");
+            }
+
+            Action<ExportImportProgressInfo> progressCallback = x =>
+            {
+                notification.TotalCount = x.TotalCount;
+                notification.ProcessedCount = x.ProcessedCount;
+                notification.Errors = x.Errors;
+                _pushNotifier.Upsert(notification);
+            };
+
+            using (var stream = new MemoryStream())
+            {
+                try
+                {
+                    _csvExporter.DoExport(stream, catalogId, progressCallback);
+
+                    stream.Position = 0;
+                    var blobRelativeUrl = "temp/Catalog-" + catalog.Name + "-prepared-for-recommendations-export.csv";
+                    //Upload result csv to blob storage
+                    using (var blobStream = _blobStorageProvider.OpenWrite(blobRelativeUrl))
+                    {
+                        stream.CopyTo(blobStream);
+                    }
+                    //Get a download url
+                    notification.DownloadUrl = _blobUrlResolver.GetAbsoluteUrl(blobRelativeUrl);
+                    notification.Description = "Export finished";
+                }
+                catch (Exception ex)
+                {
+                    notification.Description = "Export failed";
+                    // TODO: Replace with ex.ExpandExceptionMessage() if we will use VirtoCommerce.Platform.Data
+                    notification.Errors.Add(ex.ToString());
+                }
+                finally
+                {
+                    notification.Finished = DateTime.UtcNow;
+                    _pushNotifier.Upsert(notification);
+                }
+            }
+        }
+    }
+}
