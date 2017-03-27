@@ -14,7 +14,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
 
         public string ItemId { get; set; }
 
-        public string EventType { get; set; }
+        public string StoreId { get; set; }
+
+        public UserEventType EventType { get; set; }
 
         public DateTime Created { get; set; }
     }

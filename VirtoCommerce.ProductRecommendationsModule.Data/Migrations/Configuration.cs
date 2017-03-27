@@ -10,6 +10,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+            MigrationsDirectory = "Migrations";
         }
 
         protected override void Seed(VirtoCommerce.ProductRecommendationsModule.Data.Repositories.UserEventRepository context)

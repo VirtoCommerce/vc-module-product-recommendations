@@ -12,6 +12,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Repositories
     {
         IQueryable<UserEvent> UserEvents { get; }
 
-        UserEvent[] GetUserEvents(DateTime from, DateTime to);
+        UserEvent[] GetUserEventsByIds(string[] userEventsIds);
     }
 }

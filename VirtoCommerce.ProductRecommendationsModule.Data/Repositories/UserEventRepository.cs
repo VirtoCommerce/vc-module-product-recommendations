@@ -38,9 +38,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Repositories
             get { return GetAsQueryable<UserEvent>(); }
         }
 
-        public UserEvent[] GetUserEvents(DateTime from, DateTime to)
+        public UserEvent[] GetUserEventsByIds(string[] userEventsIds)
         {
-            return UserEvents.Where(e => e.Created >= from && e.Created <= to).ToArray();
+            return UserEvents.Where(x => userEventsIds.Contains(x.Id)).ToArray();
         }
 
         #endregion

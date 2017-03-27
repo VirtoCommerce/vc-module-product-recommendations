@@ -3,32 +3,32 @@
         <div class="inner-block">
             <div class="sub-t">{{blade.notification.description}}</div>
             <div class="block" ng-if="blade.notification.created || blade.notification.finished">
-                <p ng-if="blade.notification.created" ng-class="{'no-data': blade.notification.created}" class="text">{{ 'productRecommendationsModule.blades.catalogExport.labels.start' | translate }} — <i class="fa fa-clock-o"></i> {{blade.notification.created | date : 'mediumTime'}}</p>
-                <p ng-if="blade.notification.finished" ng-class="{'no-data': blade.notification.finished}" class="text">{{ 'productRecommendationsModule.blades.catalogExport.labels.end' | translate }} — <i class="fa fa-clock-o"></i> {{blade.notification.finished | date : 'mediumTime'}}</p>
+                <p ng-if="blade.notification.created" ng-class="{'no-data': blade.notification.created}" class="text">{{ 'productRecommendationsModule.blades.export.labels.start' | translate }} — <i class="fa fa-clock-o"></i> {{blade.notification.created | date : 'mediumTime'}}</p>
+                <p ng-if="blade.notification.finished" ng-class="{'no-data': blade.notification.finished}" class="text">{{ 'productRecommendationsModule.blades.export.labels.end' | translate }} — <i class="fa fa-clock-o"></i> {{blade.notification.finished | date : 'mediumTime'}}</p>
             </div>
             <div class="block" ng-if="blade.notification.totalCount || blade.notification.processedCount || blade.notification.errorCount">
                 <ul class="list __info">
                     <li class="list-item">
-                        <div class="list-t">{{ 'productRecommendationsModule.blades.catalogExport.labels.total' | translate }}</div>
+                        <div class="list-t">{{ 'productRecommendationsModule.blades.export.labels.total' | translate }}</div>
                         <div class="list-descr">{{blade.notification.totalCount}}</div>
                     </li>
                     <li class="list-item">
-                        <div class="list-t">{{ 'productRecommendationsModule.blades.catalogExport.labels.processed' | translate }}</div>
+                        <div class="list-t">{{ 'productRecommendationsModule.blades.export.labels.processed' | translate }}</div>
                         <div class="list-descr">{{blade.notification.processedCount}}</div>
                     </li>
                     <li class="list-item">
-                        <div class="list-t">{{ 'productRecommendationsModule.blades.catalogExport.labels.error-count' | translate }}</div>
+                        <div class="list-t">{{ 'productRecommendationsModule.blades.export.labels.error-count' | translate }}</div>
                         <div class="list-descr">{{blade.notification.errorCount}}</div>
                     </li>
                 </ul>
             </div>
             <div ng-if="blade.notification.errorCount > 0">
-                <span class="sub-t">{{ 'productRecommendationsModule.blades.catalogExport.labels.errors' | translate }}</span>
+                <span class="sub-t">{{ 'productRecommendationsModule.blades.export.labels.errors' | translate }}</span>
                 <div class="log">
                     <p ng-repeat="error in blade.notification.errors track by $index" class="error">{{error}}</p>
                 </div>
             </div>
-            <p class="text" ng-if="blade.notification.downloadUrl">{{ 'productRecommendationsModule.blades.catalogExport.labels.download-url' | translate }}: <a href="{{blade.notification.downloadUrl}}" target="_blank">{{blade.notification.downloadUrl}}</a></p>
+            <p class="text" ng-if="blade.notification.downloadUrl">{{ 'productRecommendationsModule.blades.export.labels.download-url' | translate }}: <a href="{{blade.notification.downloadUrl}}" target="_blank">{{blade.notification.downloadUrl}}</a></p>
         </div>
     </div>
 </div>

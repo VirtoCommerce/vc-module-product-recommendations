@@ -4,20 +4,40 @@
     blade.headIcon = 'fa fa-thumbs-up';
     blade.isLoading = false;
 
-    blade.toolbarCommands = [
-    {
-        name: "productRecommendationsModule.blades.configuration.labels.export-catalog",
+    var exportBlade = {
+        controller: 'virtoCommerce.productRecommendationsModule.exportController',
+        template: 'Modules/$(VirtoCommerce.ProductRecommendations)/Scripts/blades/export.tpl.html'
+    };
+    var exportToolbarCommand = {
         icon: 'fa fa-upload',
-        executeMethod: function () {
-            var newBlade = {
-                id: 'catalogPreparedForRecommendationsExport',
-                title: 'productRecommendationsModule.blades.catalogExport.title',
-                controller: 'virtoCommerce.productRecommendationsModule.exportController',
-                template: 'Modules/$(VirtoCommerce.ProductRecommendations)/Scripts/blades/export.tpl.html',
-                catalogId: blade.store.catalog
-            };
-            bladeNavigationService.showBlade(newBlade, blade);
-        },
         canExecuteMethod: function () { return true; }
-    }];
+    }
+    blade.toolbarCommands = [
+        angular.merge({}, exportToolbarCommand,
+        {
+            name: "productRecommendationsModule.blades.configuration.labels.export-catalog",
+            executeMethod: function () {
+                var newBlade = angular.extend({}, exportBlade, {
+                    id: 'catalogPreparedForRecommendationsExport',
+                    title: 'productRecommendationsModule.blades.catalogExport.title',
+                    catalogId: blade.store.catalog,
+                    exportType: "catalog"
+                });
+                bladeNavigationService.showBlade(newBlade, blade);
+            }
+        }),
+        angular.merge({}, exportToolbarCommand,
+        {
+            name: "productRecommendationsModule.blades.configuration.labels.export-usageData",
+            executeMethod: function () {
+                var newBlade = angular.extend({}, exportBlade,{
+                    id: 'userEventsRelatedToStoreExport',
+                    title: 'productRecommendationsModule.blades.usageDataExport.title',
+                    storeId: blade.store.id,
+                    exportType: "usageData"
+                });
+                bladeNavigationService.showBlade(newBlade, blade);
+            }
+        })
+    ];
 }]);

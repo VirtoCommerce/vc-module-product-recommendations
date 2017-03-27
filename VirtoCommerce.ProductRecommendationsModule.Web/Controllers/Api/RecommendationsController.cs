@@ -1,14 +1,18 @@
 ﻿using System;
 using System.IO;
+using System.IO.Packaging;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Hangfire;
 using VirtoCommerce.Domain.Catalog.Services;
+using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.ProductRecommendationsModule.Data.Model;
 using VirtoCommerce.ProductRecommendationsModule.Data.Services;
 using VirtoCommerce.ProductRecommendationsModule.Web.Export;
@@ -24,22 +28,29 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IBlobUrlResolver _blobUrlResolver;
         private readonly ICatalogService _catalogService;
-        private readonly CsvCatalogExporter _csvExporter;
+        private readonly IStoreService _storeService;
+        private readonly CsvExporter _csvExporter;
         private readonly IUserNameResolver _userNameResolver;
         private readonly IUserEventService _userEventService;
+        private readonly ISettingsManager _settingsManager;
+
+        private const int DefaultStreamBufferSize = 80;
 
         public RecommendationsController(IPushNotificationManager pushNotifier,
             IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver,
-            ICatalogService catalogService, CsvCatalogExporter csvExporter,
-            IUserNameResolver userNameResolver, IUserEventService userEventService)
+            ICatalogService catalogService, IStoreService storeService, CsvExporter csvExporter,
+            IUserNameResolver userNameResolver, IUserEventService userEventService,
+            ISettingsManager settingsManager)
         {
             _pushNotifier = pushNotifier;
             _blobStorageProvider = blobStorageProvider;
             _blobUrlResolver = blobUrlResolver;
             _catalogService = catalogService;
+            _storeService = storeService;
             _csvExporter = csvExporter;
             _userNameResolver = userNameResolver;
             _userEventService = userEventService;
+            _settingsManager = settingsManager;
         }
         
         [HttpGet]
@@ -63,36 +74,73 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         [ResponseType(typeof(void))]
         public IHttpActionResult AddEvent(UserEvent userEvent)
         {
-            _userEventService.AddEvent(userEvent);
+            _userEventService.Add(userEvent);
 
             return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpGet]
         [Route("catalogs/{catalogId}/export")]
-        [ResponseType(typeof(CatalogExportPushNotification))]
+        [ResponseType(typeof(ExportPushNotification))]
         public IHttpActionResult CatalogExport(string catalogId)
         {
-            var notification = new CatalogExportPushNotification(_userNameResolver.GetCurrentUserName())
+            return DoExport("CatalogPrepatedForRecommendationsExport", "Catalog prepared for recommendations export task", notification => BackgroundJob.Enqueue(() => CatalogExportBackground(catalogId, notification)));
+        }
+
+        [HttpGet]
+        [Route("stores/{storeId}/events")]
+        [ResponseType(typeof(ExportPushNotification))]
+        public IHttpActionResult UserEventsExport(string storeId)
+        {
+            return DoExport("UserEventsRelatedToStoreExport", "User events related to store export task", notification => BackgroundJob.Enqueue(() => UserEventsExportBackground(storeId, notification)));
+        }
+
+        private IHttpActionResult DoExport(string notifyType, string notificationDescription, Action<ExportPushNotification> job)
+        {
+            var notification = new ExportPushNotification(_userNameResolver.GetCurrentUserName(), notifyType)
             {
-                Title = "Catalog prepared for recommendations task export",
+                Title = notificationDescription,
                 Description = "Starting export..."
             };
             _pushNotifier.Upsert(notification);
 
-            BackgroundJob.Enqueue(() => CatalogExportBackground(catalogId, notification));
+            job(notification);
 
             return Ok(notification);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void CatalogExportBackground(string catalogId, CatalogExportPushNotification notification)
+        public void CatalogExportBackground(string catalogId, ExportPushNotification notification)
         {
             var catalog = _catalogService.GetById(catalogId);
             if (catalog == null)
             {
                 throw new NullReferenceException("catalog");
             }
+
+            ExportBackground((stream, progressCallback) => _csvExporter.DoCatalogExport(stream, catalogId, progressCallback),
+                catalog.Name,
+                _settingsManager.GetValue("ProductRecommendations.Catalog.ChunkSize", DefaultStreamBufferSize) * 1024,
+                notification);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public void UserEventsExportBackground(string storeId, ExportPushNotification notification)
+        {
+            var store = _storeService.GetById(storeId);
+            if (store == null)
+            {
+                throw new NullReferenceException("store");
+            }
+
+            ExportBackground((stream, progressCallback) => _csvExporter.DoUserEventsExport(stream, storeId, progressCallback),
+                store.Name + " Events",
+                _settingsManager.GetValue("ProductRecommendations.UserEvents.ChunkSize", DefaultStreamBufferSize) * 1024,
+                notification);
+        }
+
+        private void ExportBackground(Action<Stream, Action<ExportImportProgressInfo>> exporter, string entityName, int chunkSize, ExportPushNotification notification)
+        {
 
             Action<ExportImportProgressInfo> progressCallback = x =>
             {
@@ -106,24 +154,36 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             {
                 try
                 {
-                    _csvExporter.DoExport(stream, catalogId, progressCallback);
+                    exporter(stream, progressCallback);
 
-                    stream.Seek(0, SeekOrigin.Begin);
-                    // Recommendations API UI has a limit to maximum file name length. The limit is 50 symbols
-                    var blobRelativeUrl = "temp/catalog-prepared-for-recommendations-export.csv";
+                    var relativeUrl = "temp/" + entityName + ".zip";
                     //Upload result csv to blob storage
-                    using (var blobStream = _blobStorageProvider.OpenWrite(blobRelativeUrl))
+                    using (var blobStream = _blobStorageProvider.OpenWrite(relativeUrl))
                     {
-                        stream.CopyTo(blobStream);
+                        stream.Seek(0, SeekOrigin.Begin);
+                        using (var package = ZipPackage.Open(blobStream, FileMode.Create))
+                        {
+                            var i = 0;
+                            do
+                            {
+                                // ZipPackage uses Uri for file names and Uri don't handle whitespaces as whitespace, it handle it as %20
+                                var part = package.CreatePart(PackUriHelper.CreatePartUri(new Uri(entityName.Replace(' ', '_') + "-" + i + ".csv", UriKind.Relative)), "text/csv",
+                                    CompressionOption.Normal);
+                                using (var partStream = part.GetStream())
+                                {
+                                    stream.CopyTo(partStream, chunkSize);
+                                }
+                                i++;
+                            } while (stream.Position < stream.Length);
+                        }
                     }
                     //Get a download url
-                    notification.DownloadUrl = _blobUrlResolver.GetAbsoluteUrl(blobRelativeUrl);
+                    notification.DownloadUrl = _blobUrlResolver.GetAbsoluteUrl(relativeUrl);
                 }
                 catch (Exception ex)
                 {
                     notification.Description = "Export failed";
-                    // TODO: Replace with ex.ExpandExceptionMessage() if we will use VirtoCommerce.Platform.Data
-                    notification.Errors.Add(ex.ToString());
+                    notification.Errors.Add(ex.ExpandExceptionMessage());
                 }
                 finally
                 {

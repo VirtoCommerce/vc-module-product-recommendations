@@ -10,11 +10,19 @@
         "title": "Product recommendations",
         "subtitle": "Configure and start machine learning for recommendations",
         "labels": {
-          "export-catalog": "Export catalog"
+          "export-catalog": "Export catalog",
+          "export-usageData": "Export usage data",
+          "description-start": "Use Microsoft Cognitive Services portal to configure recommendations. Go to ",
+          "description-end":  " and create or select your project. Upload catalog & usage data and then build project to get recommendations." 
         }
       },
       "catalogExport": {
-        "title": "Catalog to csv export",
+        "title": "Catalog to csv export"
+      },
+      "usageDataExport": {
+        "title": "Usage data to csv export"
+      },
+      "export": {
         "labels": {
           "start": "Start",
           "end": "End",
