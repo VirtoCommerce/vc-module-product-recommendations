@@ -9,8 +9,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 {
     public interface IUserEventService
     {
-        void AddEvent(UserEvent userEvent);
+        void Add(UserEvent userEvent);
 
-        UserEvent[] GetUserEvents(SearchUserEventCriteria criteria);
+        UserEvent[] Search(SearchUserEventCriteria criteria);
     }
 }

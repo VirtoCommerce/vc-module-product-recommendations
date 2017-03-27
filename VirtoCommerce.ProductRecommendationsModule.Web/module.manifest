@@ -38,6 +38,27 @@
         <title>Recommendations API Key</title>
         <description>Cognitive Services account key</description>
       </setting>
+      <setting>
+        <name>ProductRecommendations.Catalog.ChunkSize</name>
+        <valueType>integer</valueType>
+        <title>Chunk size of catalog upload file</title>
+        <description>Set maximum size of catalog upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
+        <defaultValue>204800</defaultValue>
+      </setting>
+      <setting>
+        <name>ProductRecommendations.UserEvents.MaximumNumber</name>
+        <valueType>integer</valueType>
+        <title>Maximum number of user events</title>
+        <description>Set maximum number of user events, which will be uploaded to Cognitive Services</description>
+        <defaultValue>5000000</defaultValue>
+      </setting>
+      <setting>
+        <name>ProductRecommendations.UserEvents.ChunkSize</name>
+        <valueType>integer</valueType>
+        <title>Chunk size of user events upload file</title>
+        <description>Set maximum size of user event upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
+        <defaultValue>204800</defaultValue>
+      </setting>
     </group>
   </settings>
   

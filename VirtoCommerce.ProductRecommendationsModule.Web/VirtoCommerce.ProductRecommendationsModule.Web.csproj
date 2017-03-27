@@ -135,6 +135,7 @@
       <HintPath>..\packages\VirtoCommerce.Platform.Data.2.12.5\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="module.manifest" />
@@ -172,9 +173,12 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\Api\RecommendationsController.cs" />
-    <Compile Include="Export\CsvCatalogExporter.cs" />
+    <Compile Include="Export\CsvExporter.cs" />
     <Compile Include="Export\CsvProduct.cs" />
-    <Compile Include="Model\CatalogExportPushNotification.cs" />
+    <Compile Include="Export\CsvProductMap.cs" />
+    <Compile Include="Export\CsvUserEvent.cs" />
+    <Compile Include="Export\CsvUserEventMap.cs" />
+    <Compile Include="Model\ExportPushNotification.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

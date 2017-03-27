@@ -6,11 +6,11 @@ using VirtoCommerce.Platform.Core.PushNotifications;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Model
 {
-    public class CatalogExportPushNotification : PushNotification
+    public class ExportPushNotification : PushNotification
     {
-        public CatalogExportPushNotification(string creator) : base(creator)
+        public ExportPushNotification(string creator, string notifyType) : base(creator)
         {
-            NotifyType = "CatalogPrepatedForRecommendationsCsvExport";
+            NotifyType = notifyType;
             Errors = new List<string>();
         }
 
