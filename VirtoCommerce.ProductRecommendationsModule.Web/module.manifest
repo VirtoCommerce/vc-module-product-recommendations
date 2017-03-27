@@ -1,44 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <module>
-  <id>VirtoCommerce.ProductRecommendations</id>
-  <version>1.0.0</version>
-  <platformVersion>2.13.0</platformVersion>
-  <dependencies>
-    <dependency id="VirtoCommerce.Core" version="2.21.0" />
-    <dependency id="VirtoCommerce.Catalog" version="2.16.2" />
-    <dependency id="VirtoCommerce.Store" version="2.13.0" />
-  </dependencies>
+    <id>VirtoCommerce.ProductRecommendations</id>
+    <version>1.0.0</version>
+    <platformVersion>2.13.0</platformVersion>
+    <dependencies>
+        <dependency id="VirtoCommerce.Core" version="2.21.0" />
+        <dependency id="VirtoCommerce.Catalog" version="2.16.2" />
+        <dependency id="VirtoCommerce.Store" version="2.13.0" />
+    </dependencies>
 
-  <title>Product recommendations module</title>
-  <description>Automatically recommend items on your product page. Provide recommendations unique to customer and personalize their experience.</description>
-  <authors>
-    <author>Virto Commerce</author>
-  </authors>
-  <owners>
-    <owner>Virto Commerce</owner>
-  </owners>
-  <projectUrl>https://virtocommerce.com/virto-product-recommendations-module</projectUrl>
-  <iconUrl>https://github.com/VirtoCommerce/vc-module-product-recommendations/raw/master/VirtoCommerce.ProductRecommendationsModule.Web/Content/logo.png</iconUrl>
-  <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2017 Virto Commerce. All rights reserved</copyright>
-  <tags>recommendations</tags>
+    <title>Product recommendations module</title>
+    <description>Automatically recommend items on your product page. Provide recommendations unique to customer and personalize their experience.</description>
+    <authors>
+        <author>Virto Commerce</author>
+    </authors>
+    <owners>
+        <owner>Virto Commerce</owner>
+    </owners>
+    <projectUrl>https://virtocommerce.com/virto-product-recommendations-module</projectUrl>
+    <iconUrl>https://github.com/VirtoCommerce/vc-module-product-recommendations/raw/master/VirtoCommerce.ProductRecommendationsModule.Web/Content/logo.png</iconUrl>
+    <releaseNotes>First version.</releaseNotes>
+    <copyright>Copyright © 2017 Virto Commerce. All rights reserved</copyright>
+    <tags>recommendations</tags>
 
-  <assemblyFile>VirtoCommerce.ProductRecommendationsModule.Web.dll</assemblyFile>
-  <moduleType>VirtoCommerce.ProductRecommendationsModule.Web.Module, VirtoCommerce.ProductRecommendationsModule.Web</moduleType>
+    <assemblyFile>VirtoCommerce.ProductRecommendationsModule.Web.dll</assemblyFile>
+    <moduleType>VirtoCommerce.ProductRecommendationsModule.Web.Module, VirtoCommerce.ProductRecommendationsModule.Web</moduleType>
 
-  <scripts>
-    <directory virtualPath="$/Scripts" searchPattern="*.js" searchSubdirectories="true" />
-  </scripts>
+    <scripts>
+        <directory virtualPath="$/Scripts" searchPattern="*.js" searchSubdirectories="true" />
+    </scripts>
 
-  <settings>
-    <group name="Recommendations">
-      <setting>
-        <name>ProductRecommendations.ApiKey</name>
-        <valueType>string</valueType>
-        <title>Recommendations API Key</title>
-        <description>Cognitive Services account key</description>
-      </setting>
-    </group>
-  </settings>
-  
+    <settings>
+        <group name="Recommendations">
+            <setting>
+                <name>Recommendations.BaseUri</name>
+                <valueType>string</valueType>
+                <title>Recommendations API uri</title>
+                <defaultValue>https://westus.api.cognitive.microsoft.com/recommendations/v4.0</defaultValue>
+                <description>Cognitive Services uri</description>
+            </setting>
+            <setting>
+                <name>Recommendations.ApiKey</name>
+                <valueType>string</valueType>
+                <title>Recommendations API Key</title>
+                <description>Cognitive Services account key</description>
+            </setting>
+            <setting>
+                <name>Recommendations.ModelId</name>
+                <valueType>string</valueType>
+                <title>Recommendations API ModelId</title>
+                <description>Recommendations API ModelId</description>
+            </setting>
+            <setting>
+                <name>Recommendations.BuildId</name>
+                <valueType>string</valueType>
+                <title>Recommendations API BuildId</title>
+                <description>Recommendations API BuildId</description>
+            </setting>
+        </group>
+    </settings>
+
 </module>

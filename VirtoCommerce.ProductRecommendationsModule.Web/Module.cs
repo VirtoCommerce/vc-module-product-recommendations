@@ -23,7 +23,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web
         {
             using (var context = new UserEventRepository(ConnectionStringName, _container.Resolve<AuditableInterceptor>()))
             {
-                var initializer = new SetupDatabaseInitializer<UserEventRepository, VirtoCommerce.ProductRecommendationsModule.Data.Migrations.Configuration>();
+                var initializer = new SetupDatabaseInitializer<UserEventRepository, Data.Migrations.Configuration>();
                 initializer.InitializeDatabase(context);
             }
         }

@@ -79,6 +79,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CognitiveRecommendationsServiceTest.cs" />
     <Compile Include="ExportTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -87,6 +88,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\VirtoCommerce.ProductRecommendationsModule.Data\VirtoCommerce.ProductRecommendationsModule.Data.csproj">
+      <Project>{79f7a7a3-11f5-4ad6-b572-dd0313047574}</Project>
+      <Name>VirtoCommerce.ProductRecommendationsModule.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VirtoCommerce.ProductRecommendationsModule.Web\VirtoCommerce.ProductRecommendationsModule.Web.csproj">
       <Project>{87f5f84e-0eff-4da8-830f-0faac194190f}</Project>
       <Name>VirtoCommerce.ProductRecommendationsModule.Web</Name>

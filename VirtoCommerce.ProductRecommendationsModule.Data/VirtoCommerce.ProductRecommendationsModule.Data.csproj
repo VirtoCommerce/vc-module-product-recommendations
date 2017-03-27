@@ -86,6 +86,7 @@
       <DependentUpon>201703241534143_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Model\CongnitiveRecommendationsServiceSettings.cs" />
     <Compile Include="Model\RecommendedItemSetInfoList.cs" />
     <Compile Include="Model\SearchUserEventCriteria.cs" />
     <Compile Include="Model\UserEvent.cs" />
