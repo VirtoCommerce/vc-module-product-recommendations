@@ -46,7 +46,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
                 Description = string.Format("loading {0}...", entitiesType)
             };
 
-            var streamWriter = new StreamWriter(outStream, Encoding.UTF8, 1024, true) { AutoFlush = true };
+            var streamWriter = new StreamWriter(outStream, new UTF8Encoding(false), 1024, true) { AutoFlush = true };
             using (var csvWriter = new CsvWriter(streamWriter))
             {
                 //Notification
@@ -113,6 +113,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             return _userEventService.Search(new SearchUserEventCriteria
             {
                 StoreId = storeId,
+                Sort = "created:desc",
                 Skip = 0,
                 Take = maximumNumberOfEvents
             });

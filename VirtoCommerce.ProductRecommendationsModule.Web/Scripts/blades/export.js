@@ -16,9 +16,22 @@
     function initializeBlade() {
         if (!blade.notification) {
             blade.isLoading = true;
-            recommendations.exportCatalog({ catalogId: blade.catalogId },
-                function(data) { blade.notification = data; blade.isLoading = false; },
-                function(error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+            if (blade.exportType == "catalog") {
+                recommendations.exportCatalog({ catalogId: blade.catalogId },
+                    function(data) {
+                        blade.notification = data;
+                        blade.isLoading = false;
+                    },
+                    function(error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+            }
+            else if (blade.exportType == "usageData") {
+                recommendations.exportUserEvents({ storeId: blade.storeId },
+                    function (data) {
+                        blade.notification = data;
+                        blade.isLoading = false;
+                    },
+                    function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+            }
         }
     }
 

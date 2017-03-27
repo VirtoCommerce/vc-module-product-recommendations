@@ -10,10 +10,17 @@
         "title": "Product recommendations",
         "subtitle": "Configure and start machine learning for recommendations",
         "labels": {
-          "export-catalog": "Export catalog"
+          "export-catalog": "Export catalog",
+          "export-usageData": "Export usage data"
         }
       },
       "catalogExport": {
+        "title": "Catalog to csv export"
+      },
+      "usageDataExport": {
+        "title": "Usage data to csv export"
+      },
+      "export": {
         "title": "Catalog to csv export",
         "labels": {
           "start": "Start",

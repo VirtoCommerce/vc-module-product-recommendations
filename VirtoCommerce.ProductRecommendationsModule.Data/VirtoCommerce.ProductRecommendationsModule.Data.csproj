@@ -93,6 +93,10 @@
     <Compile Include="Migrations\201703270429446_UserEventType.Designer.cs">
       <DependentUpon>201703270429446_UserEventType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703270846577_UserEventsStore.cs" />
+    <Compile Include="Migrations\201703270846577_UserEventsStore.Designer.cs">
+      <DependentUpon>201703270846577_UserEventsStore.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\RecommendedItemSetInfoList.cs" />
     <Compile Include="Model\SearchUserEventCriteria.cs" />
@@ -116,6 +120,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703270429446_UserEventType.resx">
       <DependentUpon>201703270429446_UserEventType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703270846577_UserEventsStore.resx">
+      <DependentUpon>201703270846577_UserEventsStore.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

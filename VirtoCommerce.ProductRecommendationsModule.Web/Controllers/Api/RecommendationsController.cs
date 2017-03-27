@@ -84,15 +84,15 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         [ResponseType(typeof(ExportPushNotification))]
         public IHttpActionResult CatalogExport(string catalogId)
         {
-            return DoExport("CatalogPrepatedForRecommendationsCsvExport", "Catalog prepared for recommendations export task", notification => BackgroundJob.Enqueue(() => CatalogExportBackground(catalogId, notification)));
+            return DoExport("CatalogPrepatedForRecommendationsExport", "Catalog prepared for recommendations export task", notification => BackgroundJob.Enqueue(() => CatalogExportBackground(catalogId, notification)));
         }
 
         [HttpGet]
-        [Route("stores/{storeId}/export")]
+        [Route("stores/{storeId}/events")]
         [ResponseType(typeof(ExportPushNotification))]
         public IHttpActionResult UserEventsExport(string storeId)
         {
-            return DoExport("UserEventsRelatedToStoreCsvExport", "User events related to store export task", notification => BackgroundJob.Enqueue(() => UserEventsExportBackground(storeId, notification)));
+            return DoExport("UserEventsRelatedToStoreExport", "User events related to store export task", notification => BackgroundJob.Enqueue(() => UserEventsExportBackground(storeId, notification)));
         }
 
         private IHttpActionResult DoExport(string notifyType, string notificationDescription, Action<ExportPushNotification> job)
@@ -134,7 +134,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             }
 
             ExportBackground((stream, progressCallback) => _csvExporter.DoUserEventsExport(stream, storeId, progressCallback),
-                store.Name,
+                store.Name + " Events",
                 _settingsManager.GetValue("ProductRecommendations.UserEvents.ChunkSize", DefaultStreamBufferSize) * 1024,
                 notification);
         }
@@ -164,16 +164,17 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                         using (var package = ZipPackage.Open(blobStream, FileMode.Create))
                         {
                             var i = 0;
-                            while (stream.Position < stream.Length)
+                            do
                             {
                                 // ZipPackage uses Uri for file names and Uri don't handle whitespaces as whitespace, it handle it as %20
-                                var part = package.CreatePart(PackUriHelper.CreatePartUri(new Uri(entityName.Replace(' ', '_') + "-" + i + ".csv", UriKind.Relative)), "text/csv", CompressionOption.Normal);
+                                var part = package.CreatePart(PackUriHelper.CreatePartUri(new Uri(entityName.Replace(' ', '_') + "-" + i + ".csv", UriKind.Relative)), "text/csv",
+                                    CompressionOption.Normal);
                                 using (var partStream = part.GetStream())
                                 {
                                     stream.CopyTo(partStream, chunkSize);
                                 }
                                 i++;
-                            }
+                            } while (stream.Position < stream.Length);
                         }
                     }
                     //Get a download url

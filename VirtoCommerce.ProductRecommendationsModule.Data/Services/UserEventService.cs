@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Store.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.ProductRecommendationsModule.Data.Model;
 using VirtoCommerce.ProductRecommendationsModule.Data.Repositories;
 
@@ -38,7 +39,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
                 {
                     query = query.Where(x => criteria.StoreId == x.StoreId);
                 }
-                return query.Reverse().Skip(criteria.Skip).Take(criteria.Take).ToArray();
+                return query.OrderBySortInfos(criteria.SortInfos).Skip(criteria.Skip).Take(criteria.Take).ToArray();
             }
         }
     }
