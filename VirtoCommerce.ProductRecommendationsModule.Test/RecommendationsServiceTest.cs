@@ -20,7 +20,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
         {
             var service = GetRecommendationsService();
             var result = service.GetCustomerRecommendationsAsync(null, "000340019B9C4024", 5).Result;
-            Assert.True(result.Sets.Count() == 5);
+            Assert.True(result.Count() == 5);
         }
 
         private IRecommendationsService GetRecommendationsService()

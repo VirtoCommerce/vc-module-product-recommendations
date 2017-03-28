@@ -53,10 +53,10 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
 
         [HttpGet]
         [Route("")]
-        [ResponseType(typeof(RecommendedItemSets))]
-        public IHttpActionResult GetCustomerRecommendations(string storeId, string customerId, int numberOfResults)
+        [ResponseType(typeof(string[]))]
+        public async Task<IHttpActionResult> GetCustomerRecommendations(string storeId, string customerId, int numberOfResults)
         {
-            var result = _recommendationsService.GetCustomerRecommendationsAsync(storeId, customerId, numberOfResults);
+            var result = await _recommendationsService.GetCustomerRecommendationsAsync(storeId, customerId, numberOfResults);
             return Ok(result);
         }
 

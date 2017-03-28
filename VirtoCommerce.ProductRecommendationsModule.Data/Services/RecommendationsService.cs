@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Newtonsoft.Json;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.ProductRecommendationsModule.Core.Model;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
+using VirtoCommerce.ProductRecommendationsModule.Data.Model;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 {
@@ -29,12 +31,12 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             };
         }
 
-        public async Task<RecommendedItemSets> GetCustomerRecommendationsAsync(string storeId, string customerId, int numberOfResults)
+        public async Task<string[]> GetCustomerRecommendationsAsync(string storeId, string customerId, int numberOfResults)
         {
             return await GetRecommendationsAsync(UserToItemRecommendationsUrlFormat, storeId, customerId, numberOfResults);
         }
 
-        private async Task<RecommendedItemSets> GetRecommendationsAsync(string urlFormat, string storeId, string entityId, int numberOfResults)
+        private async Task<string[]> GetRecommendationsAsync(string urlFormat, string storeId, string entityId, int numberOfResults)
         {
             var store = _storeService.GetById(storeId);
 
@@ -49,6 +51,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             var buildId = buildIdSetting.Value;
 
             var exceptionFormat = "{0} must be provided.";
+
             if (string.IsNullOrEmpty(apiKey))
                 throw new Exception(string.Format(exceptionFormat, apiKeySetting.Title));
             if (string.IsNullOrEmpty(baseUri))
@@ -63,8 +66,10 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             return await GetRecommendatinsAsync(_httpClient, apiKey, url);
         }
 
-        private async Task<RecommendedItemSets> GetRecommendatinsAsync(HttpClient httpClient, string apiKey, string url)
+        private async Task<string[]> GetRecommendatinsAsync(HttpClient httpClient, string apiKey, string url)
         {
+            var result = new List<string>();
+
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Add(DefaultRequestApiKeyHeader, apiKey);
 
@@ -77,7 +82,17 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 
             var jsonString = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<RecommendedItemSets>(jsonString);
+            var recommendedItemSets = JsonConvert.DeserializeObject<RecommendedItemSets>(jsonString);
+
+            if (recommendedItemSets?.Sets != null)
+            {
+                foreach (var recommendedItemSet in recommendedItemSets.Sets.Where(recommendedItemSet => recommendedItemSet.Items != null))
+                {
+                    result.AddRange(recommendedItemSet.Items.Select(recommendedItem => recommendedItem.Id));
+                }
+            }
+
+            return result.ToArray();
         }
 
         private static string ExtractErrorInfo(HttpResponseMessage response)

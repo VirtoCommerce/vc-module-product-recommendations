@@ -1,7 +1,7 @@
 
 using Newtonsoft.Json;
 
-namespace VirtoCommerce.ProductRecommendationsModule.Core.Model
+namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
 {
     public class RecommendedItem
     {
