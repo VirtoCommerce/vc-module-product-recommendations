@@ -22,7 +22,6 @@ using VirtoCommerce.ProductRecommendationsModule.Web.Model;
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
 {
     [RoutePrefix("api/recommendations")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public class RecommendationsController: ApiController
     {
         private readonly IRecommendationsService _recommendationsService;
