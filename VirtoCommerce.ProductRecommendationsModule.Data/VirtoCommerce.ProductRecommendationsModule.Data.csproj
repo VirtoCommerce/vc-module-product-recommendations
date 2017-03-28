@@ -85,45 +85,31 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Migrations\201703241534143_Initial.cs" />
-    <Compile Include="Migrations\201703241534143_Initial.Designer.cs">
-      <DependentUpon>201703241534143_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703270429446_UserEventType.cs" />
-    <Compile Include="Migrations\201703270429446_UserEventType.Designer.cs">
-      <DependentUpon>201703270429446_UserEventType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703270846577_UserEventsStore.cs" />
-    <Compile Include="Migrations\201703270846577_UserEventsStore.Designer.cs">
-      <DependentUpon>201703270846577_UserEventsStore.cs</DependentUpon>
+    <Compile Include="Migrations\201703280649559_Initial.cs" />
+    <Compile Include="Migrations\201703280649559_Initial.Designer.cs">
+      <DependentUpon>201703280649559_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Model\CongnitiveRecommendationsServiceSettings.cs" />
-    <Compile Include="Model\RecommendedItemSetInfoList.cs" />
-    <Compile Include="Model\SearchUserEventCriteria.cs" />
-    <Compile Include="Model\UserEvent.cs" />
-    <Compile Include="Model\UserEventType.cs" />
+    <Compile Include="Model\UsageEventEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\IUserEventRepository.cs" />
-    <Compile Include="Repositories\UserEventRepository.cs" />
-    <Compile Include="Services\CognitiveRecommendationsService.cs" />
-    <Compile Include="Services\ICognitiveRecommendationsService.cs" />
-    <Compile Include="Services\IUserEventService.cs" />
-    <Compile Include="Services\UserEventService.cs" />
+    <Compile Include="Repositories\IUsageEventRepository.cs" />
+    <Compile Include="Repositories\UsageEventRepository.cs" />
+    <Compile Include="Services\RecommendationsService.cs" />
+    <Compile Include="Services\UsageEventService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703241534143_Initial.resx">
-      <DependentUpon>201703241534143_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703270429446_UserEventType.resx">
-      <DependentUpon>201703270429446_UserEventType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703270846577_UserEventsStore.resx">
-      <DependentUpon>201703270846577_UserEventsStore.cs</DependentUpon>
+    <ProjectReference Include="..\VirtoCommerce.ProductRecommendationsModule.Core\VirtoCommerce.ProductRecommendationsModule.Core.csproj">
+      <Project>{136e5865-6b23-411b-ac6b-a60df5c49f82}</Project>
+      <Name>VirtoCommerce.ProductRecommendationsModule.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201703280649559_Initial.resx">
+      <DependentUpon>201703280649559_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,10 +7,14 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Catalog.Services;
+using VirtoCommerce.Domain.Store.Model;
+using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Settings;
-using VirtoCommerce.ProductRecommendationsModule.Data.Model;
-using VirtoCommerce.ProductRecommendationsModule.Data.Services;
+using VirtoCommerce.ProductRecommendationsModule.Core.Model;
+using VirtoCommerce.ProductRecommendationsModule.Core.Model.Search;
+using VirtoCommerce.ProductRecommendationsModule.Core.Services;
+using SearchCriteria = VirtoCommerce.Domain.Catalog.Model.SearchCriteria;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 {
@@ -18,27 +22,26 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
     {
         private readonly ICatalogSearchService _catalogSearchService;
         private readonly IItemService _productService;
-        private readonly IUserEventService _userEventService;
-        private readonly ISettingsManager _settingsManager;
+        private readonly IUsageEventService _usageEventService;
 
-        public CsvExporter(ICatalogSearchService catalogSearchService, IItemService productService, IUserEventService userEventService, ISettingsManager settingsManager)
+        public CsvExporter(ICatalogSearchService catalogSearchService, IItemService productService, IUsageEventService usageEventService)
         {
             _catalogSearchService = catalogSearchService;
             _productService = productService;
-            _userEventService = userEventService;
-            _settingsManager = settingsManager;
+            _usageEventService = usageEventService;
         }
 
-        public void DoCatalogExport(Stream outStream, string catalogId, Action<ExportImportProgressInfo> progressCallback)
+        public void DoCatalogExport(Stream outStream, Store store, Catalog catalog, Action<ExportImportProgressInfo> progressCallback)
         {
-            DoExport(outStream, "products", () => LoadProducts(catalogId).Select(x => new CsvProduct(x)).ToArray(), new CsvProductMap(), progressCallback);
+            DoExport(outStream, "products", () => LoadProducts(store, catalog).Select(x => new CsvProduct(x)).ToArray(), new CsvProductMap(), progressCallback);
         }
 
-        public void DoUserEventsExport(Stream outStream, string storeId, Action<ExportImportProgressInfo> progressCallback)
+        public void DoUsageEventsExport(Stream outStream, Store store, Action<ExportImportProgressInfo> progressCallback)
         {
-            DoExport(outStream, "events", () => LoadEvents(storeId).Select(x => new CsvUserEvent(x)).ToArray(), new CsvUserEventMap(), progressCallback);
+            DoExport(outStream, "events", () => LoadEvents(store).Select(x => new CsvUsageEvent(x)).ToArray(), new CsvUsageEventMap(), progressCallback);
         }
-
+        
+        [CLSCompliant(false)]
         public void DoExport<TCsvClass, TClass>(Stream outStream, string entitiesType, Func<ICollection<TCsvClass>> entityFactory, CsvClassMap<TClass> entityClassMap, Action<ExportImportProgressInfo> progressCallback)
         {
             var prodgressInfo = new ExportImportProgressInfo
@@ -85,13 +88,14 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             }
         }
 
-        private ICollection<CatalogProduct> LoadProducts(string catalogId)
+        private ICollection<CatalogProduct> LoadProducts(Store store, Catalog catalog)
         {
+            // TODO: Implement product count restriction from Catalog.MaximumNumber setting
             var retVal = new List<CatalogProduct>();
 
             var productsIds = _catalogSearchService.Search(new SearchCriteria
             {
-                CatalogId = catalogId, SearchInChildren = true, Skip = 0, Take = int.MaxValue, ResponseGroup = SearchResponseGroup.WithProducts
+                CatalogId = catalog.Id, SearchInChildren = true, Skip = 0, Take = int.MaxValue, ResponseGroup = SearchResponseGroup.WithProducts
             }).Products.Select(x => x.Id).ToArray();
             var products = _productService.GetByIds(productsIds.Distinct().ToArray(), ItemResponseGroup.ItemInfo | ItemResponseGroup.Variations);
 
@@ -107,16 +111,16 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             return retVal;
         }
 
-        private ICollection<UserEvent> LoadEvents(string storeId)
+        private ICollection<UsageEvent> LoadEvents(Store store)
         {
-            var maximumNumberOfEvents = _settingsManager.GetValue("ProductRecommendations.UserEvents.MaximumNumber", int.MaxValue);
-            return _userEventService.Search(new SearchUserEventCriteria
+            var maximumNumberOfEvents = int.Parse(store.Settings.First(x => x.Name == "Recommendations.UsageEvents.MaximumNumber").Value);
+            return _usageEventService.Search(new UsageEventSearchCriteria
             {
-                StoreId = storeId,
+                StoreId = store.Id,
                 Sort = "created:desc",
                 Skip = 0,
                 Take = maximumNumberOfEvents
-            });
+            }).Results;
         }
     }
 }

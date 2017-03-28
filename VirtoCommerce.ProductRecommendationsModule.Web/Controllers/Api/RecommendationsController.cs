@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.IO.Packaging;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Hangfire;
@@ -11,10 +13,9 @@ using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
-using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Common;
-using VirtoCommerce.ProductRecommendationsModule.Data.Model;
-using VirtoCommerce.ProductRecommendationsModule.Data.Services;
+using VirtoCommerce.ProductRecommendationsModule.Core.Model;
+using VirtoCommerce.ProductRecommendationsModule.Core.Services;
 using VirtoCommerce.ProductRecommendationsModule.Web.Export;
 using VirtoCommerce.ProductRecommendationsModule.Web.Model;
 
@@ -24,6 +25,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
     [ApiExplorerSettings(IgnoreApi = true)]
     public class RecommendationsController: ApiController
     {
+        private readonly IRecommendationsService _recommendationsService;
         private readonly IPushNotificationManager _pushNotifier;
         private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IBlobUrlResolver _blobUrlResolver;
@@ -31,17 +33,15 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         private readonly IStoreService _storeService;
         private readonly CsvExporter _csvExporter;
         private readonly IUserNameResolver _userNameResolver;
-        private readonly IUserEventService _userEventService;
-        private readonly ISettingsManager _settingsManager;
+        private readonly IUsageEventService _usageEventService;
 
-        private const int DefaultStreamBufferSize = 80;
-
-        public RecommendationsController(IPushNotificationManager pushNotifier,
-            IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver,
-            ICatalogService catalogService, IStoreService storeService, CsvExporter csvExporter,
-            IUserNameResolver userNameResolver, IUserEventService userEventService,
-            ISettingsManager settingsManager)
+        public RecommendationsController(IRecommendationsService recommendationsService,
+            IStoreService storeService, ICatalogService catalogService,
+            IUsageEventService usageEventService, CsvExporter csvExporter,
+            IUserNameResolver userNameResolver, IPushNotificationManager pushNotifier,
+            IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver)
         {
+            _recommendationsService = recommendationsService;
             _pushNotifier = pushNotifier;
             _blobStorageProvider = blobStorageProvider;
             _blobUrlResolver = blobUrlResolver;
@@ -49,50 +49,51 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             _storeService = storeService;
             _csvExporter = csvExporter;
             _userNameResolver = userNameResolver;
-            _userEventService = userEventService;
-            _settingsManager = settingsManager;
+            _usageEventService = usageEventService;
         }
         
         [HttpGet]
-        [Route("")]
-        [ResponseType(typeof(string[]))]
-        public IHttpActionResult Get()
+        [Route("~/api/catalog/products/{productId}/recommendations")]
+        [ResponseType(typeof(RecommendedItemSets))]
+        public async Task<IHttpActionResult> GetProductRecommendations(string storeId, string productId, int numberOfResults)
         {
-            var result = new string[] {
-                "9cbd8f316e254a679ba34a900fccb076",
-                "f9330eb5ed78427abb4dc4089bc37d9f",
-                "d154d30d76d548fb8505f5124d18c1f3",
-                "1486f5a1a25f48a999189c081792a379",
-                "ad4ae79ffdbc4c97959139a0c387c72e"
-            };
+            var result = await _recommendationsService.GetRecommendationsAsync(storeId, productId, numberOfResults);
+            return Ok(result);
+        }
 
+        [HttpGet]
+        [Route("~/api/members/{customerId}/recommendations")]
+        [ResponseType(typeof(RecommendedItemSets))]
+        public IHttpActionResult GetCustomerRecommendations(string storeId, string customerId, int numberOfResults)
+        {
+            var result = _recommendationsService.GetCustomerRecommendationsAsync(storeId, customerId, numberOfResults);
             return Ok(result);
         }
 
         [HttpPost]
         [Route("events")]
         [ResponseType(typeof(void))]
-        public IHttpActionResult AddEvent(UserEvent userEvent)
+        public IHttpActionResult AddEvent(UsageEvent usageEvent)
         {
-            _userEventService.Add(userEvent);
+            _usageEventService.Add(usageEvent);
 
             return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpGet]
-        [Route("catalogs/{catalogId}/export")]
+        [Route("stores/{storeId}/catalog/export")]
         [ResponseType(typeof(ExportPushNotification))]
-        public IHttpActionResult CatalogExport(string catalogId)
+        public IHttpActionResult CatalogExport(string storeId)
         {
-            return DoExport("CatalogPrepatedForRecommendationsExport", "Catalog prepared for recommendations export task", notification => BackgroundJob.Enqueue(() => CatalogExportBackground(catalogId, notification)));
+            return DoExport("CatalogPrepatedForRecommendationsExport", "Catalog prepared for recommendations export task", notification => BackgroundJob.Enqueue(() => CatalogExportBackground(storeId, notification)));
         }
 
         [HttpGet]
         [Route("stores/{storeId}/events")]
         [ResponseType(typeof(ExportPushNotification))]
-        public IHttpActionResult UserEventsExport(string storeId)
+        public IHttpActionResult UsageEventsExport(string storeId)
         {
-            return DoExport("UserEventsRelatedToStoreExport", "User events related to store export task", notification => BackgroundJob.Enqueue(() => UserEventsExportBackground(storeId, notification)));
+            return DoExport("UsageEventsRelatedToStoreExport", "Usage events related to store export task", notification => BackgroundJob.Enqueue(() => UsageEventsExportBackground(storeId, notification)));
         }
 
         private IHttpActionResult DoExport(string notifyType, string notificationDescription, Action<ExportPushNotification> job)
@@ -110,22 +111,27 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void CatalogExportBackground(string catalogId, ExportPushNotification notification)
+        public void CatalogExportBackground(string storeId, ExportPushNotification notification)
         {
-            var catalog = _catalogService.GetById(catalogId);
+            var store = _storeService.GetById(storeId);
+            if (store == null)
+            {
+                throw new NullReferenceException("store");
+            }
+            var catalog = _catalogService.GetById(store.Catalog);
             if (catalog == null)
             {
                 throw new NullReferenceException("catalog");
             }
 
-            ExportBackground((stream, progressCallback) => _csvExporter.DoCatalogExport(stream, catalogId, progressCallback),
+            ExportBackground((stream, progressCallback) => _csvExporter.DoCatalogExport(stream, store, catalog, progressCallback),
                 catalog.Name,
-                _settingsManager.GetValue("ProductRecommendations.Catalog.ChunkSize", DefaultStreamBufferSize) * 1024,
+                int.Parse(store.Settings.First(x => x.Name == "Recommendations.Catalog.ChunkSize").Value) * 1024,
                 notification);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void UserEventsExportBackground(string storeId, ExportPushNotification notification)
+        public void UsageEventsExportBackground(string storeId, ExportPushNotification notification)
         {
             var store = _storeService.GetById(storeId);
             if (store == null)
@@ -133,9 +139,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                 throw new NullReferenceException("store");
             }
 
-            ExportBackground((stream, progressCallback) => _csvExporter.DoUserEventsExport(stream, storeId, progressCallback),
+            ExportBackground((stream, progressCallback) => _csvExporter.DoUsageEventsExport(stream, store, progressCallback),
                 store.Name + " Events",
-                _settingsManager.GetValue("ProductRecommendations.UserEvents.ChunkSize", DefaultStreamBufferSize) * 1024,
+                int.Parse(store.Settings.First(x => x.Name == "Recommendations.UsageEvents.ChunkSize").Value) * 1024,
                 notification);
         }
 
@@ -167,8 +173,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                             do
                             {
                                 // ZipPackage uses Uri for file names and Uri don't handle whitespaces as whitespace, it handle it as %20
-                                var part = package.CreatePart(PackUriHelper.CreatePartUri(new Uri(entityName.Replace(' ', '_') + "-" + i + ".csv", UriKind.Relative)), "text/csv",
-                                    CompressionOption.Normal);
+                                var part = package.CreatePart(PackUriHelper.CreatePartUri(
+                                    new Uri(entityName.Replace(' ', '_') + "-" + i + ".csv", UriKind.Relative)), "text/csv", CompressionOption.Normal);
                                 using (var partStream = part.GetStream())
                                 {
                                     stream.CopyTo(partStream, chunkSize);

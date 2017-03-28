@@ -5,7 +5,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    public sealed class Configuration : DbMigrationsConfiguration<VirtoCommerce.ProductRecommendationsModule.Data.Repositories.UserEventRepository>
+    public sealed class Configuration : DbMigrationsConfiguration<VirtoCommerce.ProductRecommendationsModule.Data.Repositories.UsageEventRepository>
     {
         public Configuration()
         {
@@ -13,7 +13,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Migrations
             MigrationsDirectory = "Migrations";
         }
 
-        protected override void Seed(VirtoCommerce.ProductRecommendationsModule.Data.Repositories.UserEventRepository context)
+        protected override void Seed(VirtoCommerce.ProductRecommendationsModule.Data.Repositories.UsageEventRepository context)
         {
             //  This method will be called after migrating to the latest version.
 

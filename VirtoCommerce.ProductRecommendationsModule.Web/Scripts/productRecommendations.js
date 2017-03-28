@@ -14,7 +14,7 @@ angular.module(moduleName, [])
     var menuExportTemplate = {
         priority: 900,
         satisfy: function(notify, place) {
-                return place == 'menu' && (notify.notifyType == 'CatalogPrepatedForRecommendationsExport' || notify.notifyType == "UserEventsRelatedToStoreExport");
+                return place == 'menu' && (notify.notifyType == 'CatalogPrepatedForRecommendationsExport' || notify.notifyType == "UsageEventsRelatedToStoreExport");
         },
         template: 'Modules/$(VirtoCommerce.ProductRecommendations)/Scripts/blades/notifications/menuExport.tpl.html',
         action: function (notify) { $state.go('workspace.pushNotificationsHistory', notify) }
@@ -24,7 +24,7 @@ angular.module(moduleName, [])
     var historyExportTemplate = {
         priority: 900,
         satisfy: function (notify, place) {
-            return place == 'history' && (notify.notifyType == 'CatalogPrepatedForRecommendationsExport' || notify.notifyType == "UserEventsRelatedToStoreExport");
+            return place == 'history' && (notify.notifyType == 'CatalogPrepatedForRecommendationsExport' || notify.notifyType == "UsageEventsRelatedToStoreExport");
         },
         template: 'Modules/$(VirtoCommerce.ProductRecommendations)/Scripts/blades/notifications/historyExport.tpl.html',
         action: function (notify) {
@@ -39,9 +39,9 @@ angular.module(moduleName, [])
                     title: 'productRecommendationsModule.blades.catalogExport.title',
                 }));
             }
-            else if (notify.notifyType == 'UserEventsRelatedToStoreExport') {
+            else if (notify.notifyType == 'UsageEventsRelatedToStoreExport') {
                 bladeNavigationService.showBlade(angular.extend({}, blade, {
-                    id: 'userEventsRelatedToStoreExport',
+                    id: 'UsageEventsRelatedToStoreExport',
                     title: 'productRecommendationsModule.blades.usageDataExport.title',
                 }));
             }

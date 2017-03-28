@@ -7,13 +7,13 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class UserEventsStore : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(UserEventsStore));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201703270846577_UserEventsStore"; }
+            get { return "201703280649559_Initial"; }
         }
         
         string IMigrationMetadata.Source

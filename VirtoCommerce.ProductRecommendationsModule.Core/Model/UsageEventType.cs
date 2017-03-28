@@ -1,6 +1,6 @@
-﻿namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
+﻿namespace VirtoCommerce.ProductRecommendationsModule.Core.Model
 {
-    public enum UserEventType
+    public enum UsageEventType
     {
         Click,
         RecommendationClick,

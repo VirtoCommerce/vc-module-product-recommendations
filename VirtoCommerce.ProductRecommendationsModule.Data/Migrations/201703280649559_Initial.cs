@@ -8,13 +8,14 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.UserEvent",
+                "dbo.UsageEvent",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
-                        UserId = c.String(),
-                        ItemId = c.String(),
-                        EventType = c.String(),
+                        CustomerId = c.String(nullable: false, maxLength: 64),
+                        StoreId = c.String(nullable: false, maxLength: 64),
+                        ItemId = c.String(nullable: false, maxLength: 64),
+                        EventType = c.String(nullable: false, maxLength: 64),
                         Created = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
@@ -23,7 +24,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Migrations
         
         public override void Down()
         {
-            DropTable("dbo.UserEvent");
+            DropTable("dbo.UsageEvent");
         }
     }
 }

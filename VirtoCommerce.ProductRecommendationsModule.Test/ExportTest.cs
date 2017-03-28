@@ -5,27 +5,32 @@ using System.Text;
 using Moq;
 using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Catalog.Services;
+using VirtoCommerce.Domain.Commerce.Model.Search;
+using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Platform.Core.Settings;
-using VirtoCommerce.ProductRecommendationsModule.Data.Model;
-using VirtoCommerce.ProductRecommendationsModule.Data.Services;
+using VirtoCommerce.ProductRecommendationsModule.Core.Model;
+using VirtoCommerce.ProductRecommendationsModule.Core.Model.Search;
+using VirtoCommerce.ProductRecommendationsModule.Core.Services;
 using VirtoCommerce.ProductRecommendationsModule.Web.Export;
 using Xunit;
+using SearchCriteria = VirtoCommerce.Domain.Catalog.Model.SearchCriteria;
+using SearchResult = VirtoCommerce.Domain.Catalog.Model.SearchResult;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Test
 {
     public class ExportTest
     {
-        private const int MaximumNumberOfUserEvents = 5000000;
+        private const int MaximumNumberOfUsageEvents = 5000000;
 
         [Fact]
         public void ExportCatalogTest()
         {
             var searchService = GetCatalogSearchService();
             var productService = GetProductService();
-            var csvCatalogExporter = new CsvExporter(searchService, productService, null, null);
+            var csvCatalogExporter = new CsvExporter(searchService, productService, null);
             using (var stream = new MemoryStream())
             {
-                csvCatalogExporter.DoCatalogExport(stream, null, x => {});
+                csvCatalogExporter.DoCatalogExport(stream, GetStore(), GetCatalog(), x => { });
                 stream.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
                 using (var streamReader = new StreamReader(stream))
@@ -38,18 +43,18 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
         }
 
         [Fact]
-        public void ExportUserEventsTest()
+        public void ExportUsageEventsTest()
         {
-            var csvCatalogExporter = new CsvExporter(null, null, GetUserEventService(), GetSettingManager());
+            var csvCatalogExporter = new CsvExporter(null, null, GetUsageEventService());
             using (var stream = new MemoryStream())
             {
-                csvCatalogExporter.DoUserEventsExport(stream, null, x => { });
+                csvCatalogExporter.DoUsageEventsExport(stream, GetStore(), x => { });
                 stream.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
                 using (var streamReader = new StreamReader(stream))
                 {
                     var csv = streamReader.ReadToEnd();
-                    var wellFormedCsv = GetWellFormedUserEventsCsv();
+                    var wellFormedCsv = GetWellFormedUsageEventsCsv();
                     Assert.True(csv == wellFormedCsv);
                 }
             }
@@ -71,20 +76,30 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
             return productService.Object;
         }
 
-        private IUserEventService GetUserEventService()
+        private IUsageEventService GetUsageEventService()
         {
-            var userEventService = new Mock<IUserEventService>();
-            userEventService.Setup(x => x.Search(It.Is<SearchUserEventCriteria>(y => y.Take == MaximumNumberOfUserEvents)))
-                .Returns<SearchUserEventCriteria>(x => GetUserEvents());
-            return userEventService.Object;
+            var usageEventService = new Mock<IUsageEventService>();
+            usageEventService.Setup(x => x.Search(It.Is<UsageEventSearchCriteria>(y => y.Take == MaximumNumberOfUsageEvents)))
+                .Returns<UsageEventSearchCriteria>(x => new GenericSearchResult<UsageEvent> { Results = GetUsageEvents() });
+            return usageEventService.Object;
         }
 
-        private ISettingsManager GetSettingManager()
+        private Store GetStore()
         {
-            var settingManager = new Mock<ISettingsManager>();
-            settingManager.Setup(x => x.GetValue(It.Is<string>(y => string.Compare(y, "ProductRecommendations.UserEvents.MaximumNumber", StringComparison.OrdinalIgnoreCase) == 0), It.IsAny<int>()))
-                .Returns<string, int>((x, y) => MaximumNumberOfUserEvents);
-            return settingManager.Object;
+            var store = new Store
+            {
+                Settings = new[]
+                {
+                    new SettingEntry { Name = "Recommendations.UsageEvents.MaximumNumber", Value = MaximumNumberOfUsageEvents.ToString() }
+                }
+            };
+            return store;
+        }
+
+        private Catalog GetCatalog()
+        {
+            var catalog = new Catalog();
+            return catalog;
         }
 
         private Category[] GetCategories()
@@ -120,34 +135,34 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
             return products;
         }
 
-        private UserEvent[] GetUserEvents()
+        private UsageEvent[] GetUsageEvents()
         {
             return new[]
             {
-                new UserEvent
+                new UsageEvent
                 {
-                    UserId = "Test user",
+                    CustomerId = "Test user",
                     ItemId = "Test item",
-                    EventType = UserEventType.Click,
+                    EventType = UsageEventType.Click,
                     Created = DateTime.Parse("1970/01/01 00:00")
                 },
-                new UserEvent
+                new UsageEvent
                 {
-                    UserId = "Test user",
+                    CustomerId = "Test user",
                     ItemId = "Test item",
-                    EventType = UserEventType.AddShopCart,
+                    EventType = UsageEventType.AddShopCart,
                     Created = DateTime.Parse("1980/06/01 12:00")
                 },
-                new UserEvent
+                new UsageEvent
                 {
-                    UserId = "Test user",
+                    CustomerId = "Test user",
                     ItemId = "Test item",
-                    EventType = UserEventType.Purchase,
+                    EventType = UsageEventType.Purchase,
                     Created = DateTime.Parse("1990/01/01 00:00")
                 }
             };
         }
-        
+
         private string GetWellFormedCatalogCsv()
         {
             var csvFormat = "{0},";
@@ -170,21 +185,21 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
             return stringBuilder.ToString();
         }
 
-        private string GetWellFormedUserEventsCsv()
+        private string GetWellFormedUsageEventsCsv()
         {
             var csvFormat = "{0},";
             var stringBuilder = new StringBuilder();
-            var appendUserEvent = new Action<UserEvent>(userEvent =>
+            var appendUsageEvent = new Action<UsageEvent>(usageEvent =>
             {
-                stringBuilder.AppendFormat(csvFormat, userEvent.UserId);
-                stringBuilder.AppendFormat(csvFormat, userEvent.ItemId);
-                stringBuilder.AppendFormat(csvFormat, userEvent.EventType.ToString());
-                stringBuilder.AppendLine(userEvent.Created.ToString("s"));
+                stringBuilder.AppendFormat(csvFormat, usageEvent.CustomerId);
+                stringBuilder.AppendFormat(csvFormat, usageEvent.ItemId);
+                stringBuilder.AppendFormat(csvFormat, usageEvent.EventType.ToString());
+                stringBuilder.AppendLine(usageEvent.Created.ToString("s"));
 
             });
-            foreach (var userEvent in GetUserEvents())
+            foreach (var usageEvent in GetUsageEvents())
             {
-                appendUserEvent(userEvent);
+                appendUsageEvent(usageEvent);
             }
             return stringBuilder.ToString();
         }

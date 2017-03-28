@@ -1,7 +1,9 @@
+using System;
 using CsvHelper.Configuration;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 {
+    [CLSCompliant(false)]
     public class CsvProductMap: CsvClassMap<CsvProduct>
     {
         public CsvProductMap()

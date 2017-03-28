@@ -7,6 +7,7 @@
         <dependency id="VirtoCommerce.Core" version="2.21.0" />
         <dependency id="VirtoCommerce.Catalog" version="2.16.2" />
         <dependency id="VirtoCommerce.Store" version="2.13.0" />
+        <dependency id="VirtoCommerce.Customer" version="2.13.0" />
     </dependencies>
 
     <title>Product recommendations module</title>
@@ -33,49 +34,49 @@
     <settings>
         <group name="Recommendations">
             <setting>
-                <name>Recommendations.BaseUri</name>
-                <valueType>string</valueType>
-                <title>Recommendations API uri</title>
-                <defaultValue>https://westus.api.cognitive.microsoft.com/recommendations/v4.0</defaultValue>
-                <description>Cognitive Services uri</description>
-            </setting>
-            <setting>
                 <name>Recommendations.ApiKey</name>
                 <valueType>string</valueType>
                 <title>Recommendations API Key</title>
-                <description>Cognitive Services account key</description>
+                <description>Microsoft Cognitive Services account key</description>
+            </setting>
+            <setting>
+                <name>Recommendations.BaseUrl</name>
+                <valueType>string</valueType>
+                <title>Recommendations API URL</title>
+                <defaultValue>https://westus.api.cognitive.microsoft.com/recommendations/v4.0</defaultValue>
+                <description>Microsoft Cognitive Services Recommendations API URL</description>
             </setting>
             <setting>
                 <name>Recommendations.ModelId</name>
                 <valueType>string</valueType>
-                <title>Recommendations API ModelId</title>
-                <description>Recommendations API ModelId</description>
+                <title>Model ID</title>
+                <description>Recommendations API Model ID</description>
             </setting>
             <setting>
                 <name>Recommendations.BuildId</name>
                 <valueType>string</valueType>
-                <title>Recommendations API BuildId</title>
-                <description>Recommendations API BuildId</description>
+                <title>Build ID</title>
+                <description>Recommendations API Build ID</description>
             </setting>
             <setting>
-                <name>ProductRecommendations.Catalog.ChunkSize</name>
+                <name>Recommendations.Catalog.ChunkSize</name>
                 <valueType>integer</valueType>
                 <title>Chunk size of catalog upload file</title>
                 <description>Set maximum size of catalog upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
                 <defaultValue>204800</defaultValue>
             </setting>
             <setting>
-                <name>ProductRecommendations.UserEvents.MaximumNumber</name>
+                <name>Recommendations.UsageEvents.MaximumNumber</name>
                 <valueType>integer</valueType>
-                <title>Maximum number of user events</title>
-                <description>Set maximum number of user events, which will be uploaded to Cognitive Services</description>
+                <title>Maximum number of usage events</title>
+                <description>Set maximum number of usage events, which will be uploaded to Cognitive Services</description>
                 <defaultValue>5000000</defaultValue>
             </setting>
             <setting>
-                <name>ProductRecommendations.UserEvents.ChunkSize</name>
+                <name>Recommendations.UsageEvents.ChunkSize</name>
                 <valueType>integer</valueType>
-                <title>Chunk size of user events upload file</title>
-                <description>Set maximum size of user event upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
+                <title>Chunk size of usage events upload file</title>
+                <description>Set maximum size of usage event upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
                 <defaultValue>204800</defaultValue>
             </setting>
         </group>

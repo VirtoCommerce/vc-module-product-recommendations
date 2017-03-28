@@ -20,7 +20,7 @@
                 var newBlade = angular.extend({}, exportBlade, {
                     id: 'catalogPreparedForRecommendationsExport',
                     title: 'productRecommendationsModule.blades.catalogExport.title',
-                    catalogId: blade.store.catalog,
+                    storeId: blade.store.id,
                     exportType: "catalog"
                 });
                 bladeNavigationService.showBlade(newBlade, blade);
@@ -31,7 +31,7 @@
             name: "productRecommendationsModule.blades.configuration.labels.export-usageData",
             executeMethod: function () {
                 var newBlade = angular.extend({}, exportBlade,{
-                    id: 'userEventsRelatedToStoreExport',
+                    id: 'UsageEventsRelatedToStoreExport',
                     title: 'productRecommendationsModule.blades.usageDataExport.title',
                     storeId: blade.store.id,
                     exportType: "usageData"
