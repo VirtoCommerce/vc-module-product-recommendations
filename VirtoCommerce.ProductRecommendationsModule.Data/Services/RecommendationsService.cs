@@ -30,9 +30,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             };
         }
 
-        public async Task<RecommendedItemSets> GetRecommendationsAsync(string storeId, string itemId, int numberOfResults)
+        public async Task<RecommendedItemSets> GetRecommendationsAsync(string storeId, string[] itemIds, int numberOfResults)
         {
-            return await GetRecommendationsAsync(ItemToItemRecommendationsUrlFormat, storeId, itemId, numberOfResults);
+            return await GetRecommendationsAsync(ItemToItemRecommendationsUrlFormat, storeId, string.Join(",", itemIds), numberOfResults);
         }
 
         public async Task<RecommendedItemSets> GetCustomerRecommendationsAsync(string storeId, string customerId, int numberOfResults)
