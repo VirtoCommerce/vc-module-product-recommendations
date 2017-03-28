@@ -66,6 +66,13 @@
                 <defaultValue>204800</defaultValue>
             </setting>
             <setting>
+                <name>Recommendations.UsageEvents.IsEnabled</name>
+                <valueType>boolean</valueType>
+                <title>Enable usage events collection</title>
+                <description>Enable usage events collection if you need to collect usage data for your recommendations model</description>
+                <defaultValue>false</defaultValue>
+            </setting>
+            <setting>
                 <name>Recommendations.UsageEvents.MaximumNumber</name>
                 <valueType>integer</valueType>
                 <title>Maximum number of usage events</title>

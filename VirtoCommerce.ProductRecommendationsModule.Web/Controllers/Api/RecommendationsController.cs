@@ -51,18 +51,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             _userNameResolver = userNameResolver;
             _usageEventService = usageEventService;
         }
-        
-        [HttpGet]
-        [Route("~/api/catalog/products/recommendations")]
-        [ResponseType(typeof(RecommendedItemSets))]
-        public async Task<IHttpActionResult> GetProductRecommendations(string storeId, string[] productIds, int numberOfResults)
-        {
-            var result = await _recommendationsService.GetRecommendationsAsync(storeId, productIds, numberOfResults);
-            return Ok(result);
-        }
 
         [HttpGet]
-        [Route("~/api/members/{customerId}/recommendations")]
+        [Route("")]
         [ResponseType(typeof(RecommendedItemSets))]
         public IHttpActionResult GetCustomerRecommendations(string storeId, string customerId, int numberOfResults)
         {
@@ -75,13 +66,21 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         [ResponseType(typeof(void))]
         public IHttpActionResult AddEvent(UsageEvent usageEvent)
         {
+            var store = _storeService.GetById(usageEvent.StoreId);
+            if (store == null)
+            {
+                throw new ArgumentException("Event has invalid store ID");
+            }
+            if (!bool.Parse(store.Settings.First(x => x.Name == "Recommendations.UsageEvents.IsEnabled").Value))
+            {
+                return StatusCode(HttpStatusCode.Forbidden);
+            }
             _usageEventService.Add(usageEvent);
-
             return StatusCode(HttpStatusCode.NoContent);
         }
 
         [HttpGet]
-        [Route("stores/{storeId}/catalog/export")]
+        [Route("catalog/export")]
         [ResponseType(typeof(ExportPushNotification))]
         public IHttpActionResult CatalogExport(string storeId)
         {
@@ -89,7 +88,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         }
 
         [HttpGet]
-        [Route("stores/{storeId}/events")]
+        [Route("events")]
         [ResponseType(typeof(ExportPushNotification))]
         public IHttpActionResult UsageEventsExport(string storeId)
         {

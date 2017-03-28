@@ -13,7 +13,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
     {
         private readonly IStoreService _storeService;
 
-        private const string ItemToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/item?itemIds={2}&buildId={3}&numberOfResults={4}&minimalScore=0";
         private const string UserToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/user?userId={2}&buildId={3}&numberOfResults={4}";
 
         private const string DefaultRequestApiKeyHeader = "Ocp-Apim-Subscription-Key";
@@ -28,11 +27,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             {
                 Timeout = TimeSpan.FromMinutes(1)
             };
-        }
-
-        public async Task<RecommendedItemSets> GetRecommendationsAsync(string storeId, string[] itemIds, int numberOfResults)
-        {
-            return await GetRecommendationsAsync(ItemToItemRecommendationsUrlFormat, storeId, string.Join(",", itemIds), numberOfResults);
         }
 
         public async Task<RecommendedItemSets> GetCustomerRecommendationsAsync(string storeId, string customerId, int numberOfResults)

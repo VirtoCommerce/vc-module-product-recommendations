@@ -16,14 +16,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
     public class RecommendationsServiceTest
     {
         [Fact]
-        public void ItemToItemRecommendationsTest()
-        {
-            var service = GetRecommendationsService();
-            var result = service.GetRecommendationsAsync(null, new [] { "AAA-01148" } , 5).Result;
-            Assert.True(result.Sets.Count() == 5);
-        }
-
-        [Fact]
         public void UserToItemRecommendationsTest()
         {
             var service = GetRecommendationsService();
