@@ -145,18 +145,18 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                 _pushNotifier.Upsert(notification);
             };
 
-            using (var stream = new MemoryStream())
+            using (var exportStream = new MemoryStream())
             {
                 try
                 {
-                    exporter(stream, progressCallback);
-
+                    exporter(exportStream, progressCallback);
+                    
+                    // Split export file to parts with maximum support size
                     var relativeUrl = "temp/" + entityName + ".zip";
-                    //Upload result csv to blob storage
-                    using (var blobStream = _blobStorageProvider.OpenWrite(relativeUrl))
+                    using (var zipStream = new MemoryStream())
                     {
-                        stream.Seek(0, SeekOrigin.Begin);
-                        using (var package = ZipPackage.Open(blobStream, FileMode.Create))
+                        exportStream.Seek(0, SeekOrigin.Begin);
+                        using (var package = ZipPackage.Open(zipStream, FileMode.Create))
                         {
                             var i = 0;
                             do
@@ -166,13 +166,20 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
                                     new Uri(entityName.Replace(' ', '_') + "-" + i + ".csv", UriKind.Relative)), "text/csv", CompressionOption.Normal);
                                 using (var partStream = part.GetStream())
                                 {
-                                    stream.CopyTo(partStream, chunkSize);
+                                    exportStream.CopyTo(partStream, chunkSize);
                                 }
                                 i++;
-                            } while (stream.Position < stream.Length);
+                            } while (exportStream.Position < exportStream.Length);
+                        }
+
+                        // Upload result to blob storage
+                        using (var blobStream = _blobStorageProvider.OpenWrite(relativeUrl))
+                        {
+                            zipStream.Seek(0, SeekOrigin.Begin);
+                            zipStream.CopyTo(blobStream);
                         }
                     }
-                    //Get a download url
+                    // Get a download url
                     notification.DownloadUrl = _blobUrlResolver.GetAbsoluteUrl(relativeUrl);
                 }
                 catch (Exception ex)
