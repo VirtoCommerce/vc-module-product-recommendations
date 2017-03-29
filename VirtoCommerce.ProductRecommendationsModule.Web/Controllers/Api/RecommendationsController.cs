@@ -63,18 +63,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         [HttpPost]
         [Route("events")]
         [ResponseType(typeof(void))]
-        public IHttpActionResult AddEvent(UsageEvent usageEvent)
+        public IHttpActionResult AddEvent(UsageEvent[] usageEvents)
         {
-            var store = _storeService.GetById(usageEvent.StoreId);
-            if (store == null)
-            {
-                throw new ArgumentException("Event has invalid store ID");
-            }
-            if (!bool.Parse(store.Settings.First(x => x.Name == "Recommendations.UsageEvents.IsEnabled").Value))
-            {
-                return StatusCode(HttpStatusCode.Forbidden);
-            }
-            _usageEventService.Add(usageEvent);
+            _usageEventService.Add(usageEvents);
             return StatusCode(HttpStatusCode.NoContent);
         }
 

@@ -6,7 +6,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Core.Services
 {
     public interface IUsageEventService
     {
-        void Add(UsageEvent usageEvent);
+        void Add(UsageEvent[] usageEvents);
 
         GenericSearchResult<UsageEvent> Search(UsageEventSearchCriteria criteria);
     }

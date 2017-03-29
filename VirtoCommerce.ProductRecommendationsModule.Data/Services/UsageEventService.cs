@@ -20,12 +20,15 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             _usageEventRepositoryFactory = usageEventRepositoryFactory;
         }
 
-        public void Add(UsageEvent usageEvent)
+        public void Add(UsageEvent[] usageEvents)
         {
             var pkMap = new PrimaryKeyResolvingMap();
             using (var repository = _usageEventRepositoryFactory())
             {
-                repository.Add(AbstractTypeFactory<UsageEventEntity>.TryCreateInstance().FromModel(usageEvent, pkMap));
+                foreach (var usageEvent in usageEvents)
+                {
+                    repository.Add(AbstractTypeFactory<UsageEventEntity>.TryCreateInstance().FromModel(usageEvent, pkMap));
+                }
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
             }
