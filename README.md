@@ -5,20 +5,20 @@ Product recommendations built using Azure Machine Learning. Automatically recomm
 1. Install the module
 2. Collect data:
 * Open Store where you plan to use recommendations 
- * Open Recommendations widget in Store
+ * Open Recommendations widget
  * * Export catalog
  * * Export usage data
  * * * If you doesn't have usage data at this moment, wait until it will be collected or prepare such file from other sources
-2. Create *Cognitive Services APIs account* for *Recommendations API* at [Azure portal](https://portal.azure.com/) in your Azure subscription and obtain a `Key`
-3. Go to [Recommendations UI](https://recommendations-portal.azurewebsites.net)
+3. Create *Cognitive Services APIs account* for *Recommendations API* at [Azure portal](https://portal.azure.com/) in your Azure subscription and obtain a `Key`
+4. Go to [Recommendations UI](https://recommendations-portal.azurewebsites.net)
 * Log in to the portal by entering your `Key` in the `Account Key` field
 * Create a project
-* Upload the catalog you got in step `#1`
-* Upload the usage data you got in step `#1`
+* Upload the catalog you got in step `#2`
+* Upload the usage data you got in step `#2`
 * Create a build. Select `Build Type` as `Recommendations`
-4. Configure settings
+5. Configure settings
  * Open store settings. The following settings required:
- * * `Recommendations API Key`. Copy your `Key` you got in step `#2`
+ * * `Recommendations API Key`. Copy your `Key` you got in step `#3`
  * * `Model ID`. Copy `Model ID` from your project in *Recommendations UI*
  * * `Build ID`. copy `Build ID` from a build in your project in *Recommendations UI*
 
