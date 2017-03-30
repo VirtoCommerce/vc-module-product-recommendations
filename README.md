@@ -35,6 +35,27 @@ Product recommendations built using Azure Machine Learning. Automatically recomm
  
 ![Settings](https://cloud.githubusercontent.com/assets/6369252/24510451/b2e97a90-1582-11e7-91d4-1981dabab136.png)
 
+## Storefront installation and configuration
+1. Snippet configuration
+* Open template file where you want to display recommended products (ex. product.liquid)
+* Add snipped call with the following code:
+```html
+{% include 'recommendations', provider: 'Cognitive', type: 'Recommendations', product_ids: product.id, size: 5 %}
+```
+* * `provider` key can correspond to the following values:
+* * * `Cognitive` - provide a products from the Azure Machine Learning Service
+* * * `Association` - provide a products from accosiations lists, configured in Catalog module
+* * for the `product_ids` key we should set the current product id
+* * `size` key indicates the lenght of the result products list
+
+2. User events gathering configuration
+
+The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this open settings file `settings_data.json` and provide new setting entry:
+```json
+"recommendations_enable": true
+```
+
+
 ## Personalized recommendations
 Use the purchase history of a particular customer to provide recommendations unique to that customer and personalize their experience.
 
