@@ -1,15 +1,9 @@
-﻿using System;
-using VirtoCommerce.Platform.Core.Common;
+﻿using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Core.Model
 {
-    public class UsageEvent : Entity
+    public class UsageEvent : AuditableEntity
     {
-        public UsageEvent()
-        {
-            Created = DateTime.UtcNow;
-        }
-        
         public string CustomerId { get; set; }
         
         public string StoreId { get; set; }
@@ -17,7 +11,5 @@ namespace VirtoCommerce.ProductRecommendationsModule.Core.Model
         public string ItemId { get; set; }
         
         public UsageEventType EventType { get; set; }
-        
-        public DateTime Created { get; set; }
     }
 }

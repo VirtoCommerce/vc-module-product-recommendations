@@ -3,6 +3,8 @@ using CsvHelper.Configuration;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 {
+    // Why we need this?
+    // Look at CvsExporter class to answer
     [CLSCompliant(false)]
     public class CsvProductMap: CsvClassMap<CsvProduct>
     {

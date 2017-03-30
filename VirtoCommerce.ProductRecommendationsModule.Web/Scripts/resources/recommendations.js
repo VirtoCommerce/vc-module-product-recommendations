@@ -3,6 +3,6 @@
 
     return $resource(null, null, {
         exportCatalog: { method: 'GET', url: 'api/recommendations/catalog/export' },
-        exportUsageEvents: { method: 'GET', url: 'api/recommendations/events' }
+        exportUsageEvents: { method: 'GET', url: 'api/recommendations/events/export' }
     });
 }]);

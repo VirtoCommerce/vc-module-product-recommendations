@@ -85,14 +85,19 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CognitiveServices\RecommendationsApi.cs" />
     <Compile Include="Migrations\201703280649559_Initial.cs" />
     <Compile Include="Migrations\201703280649559_Initial.Designer.cs">
       <DependentUpon>201703280649559_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703300542438_UsageEventAuditable.cs" />
+    <Compile Include="Migrations\201703300542438_UsageEventAuditable.Designer.cs">
+      <DependentUpon>201703300542438_UsageEventAuditable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Model\RecommendedItem.cs" />
-    <Compile Include="Model\RecommendedItemSet.cs" />
-    <Compile Include="Model\RecommendedItemSets.cs" />
+    <Compile Include="CognitiveServices\RecommendedItem.cs" />
+    <Compile Include="CognitiveServices\RecommendedItemSet.cs" />
+    <Compile Include="CognitiveServices\RecommendedItemSets.cs" />
     <Compile Include="Model\UsageEventEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IUsageEventRepository.cs" />
@@ -114,7 +119,11 @@
     <EmbeddedResource Include="Migrations\201703280649559_Initial.resx">
       <DependentUpon>201703280649559_Initial.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703300542438_UsageEventAuditable.resx">
+      <DependentUpon>201703300542438_UsageEventAuditable.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

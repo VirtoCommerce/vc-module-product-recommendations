@@ -101,6 +101,7 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -175,9 +176,12 @@
     <Compile Include="Controllers\Api\RecommendationsController.cs" />
     <Compile Include="Export\CsvExporter.cs" />
     <Compile Include="Export\CsvProduct.cs" />
+    <Compile Include="Export\CsvCatalogExporter.cs" />
     <Compile Include="Export\CsvProductMap.cs" />
     <Compile Include="Export\CsvUsageEvent.cs" />
+    <Compile Include="Export\CsvUsageEventsExporter.cs" />
     <Compile Include="Export\CsvUsageEventMap.cs" />
+    <Compile Include="Export\Exporter.cs" />
     <Compile Include="Model\ExportPushNotification.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

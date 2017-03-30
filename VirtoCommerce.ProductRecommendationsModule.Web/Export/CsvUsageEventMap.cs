@@ -4,6 +4,8 @@ using VirtoCommerce.ProductRecommendationsModule.Core.Model;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 {
+    // Why we need this?
+    // Look at CvsExporter class to answer
     [CLSCompliant(false)]
     public class CsvUsageEventMap : CsvClassMap<UsageEvent>
     {
@@ -15,7 +17,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             // Item Id
             Map(x => x.ItemId).Index(1);
             // Time
-            Map(x => x.Created).Index(2);
+            Map(x => x.CreatedDate).Index(2);
             // Event
             Map(x => x.EventType).Index(3);
         }

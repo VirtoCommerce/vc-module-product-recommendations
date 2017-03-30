@@ -10,7 +10,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             CustomerId = usageEvent.CustomerId;
             ItemId = usageEvent.ItemId;
             EventType = usageEvent.EventType.ToString();
-            Created = usageEvent.Created.ToString("s");
+            CreatedDate = usageEvent.CreatedDate.ToString("s");
         }
 
         public string CustomerId { get; set; }
@@ -19,6 +19,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 
         public string EventType { get; set; }
 
-        public string Created { get; set; }
+        public string CreatedDate { get; set; }
     }
 }

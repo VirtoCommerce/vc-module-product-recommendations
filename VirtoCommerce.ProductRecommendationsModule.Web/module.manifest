@@ -18,7 +18,7 @@
         <owner>Virto Commerce</owner>
     </owners>
     <projectUrl>https://virtocommerce.com/virto-product-recommendations-module</projectUrl>
-    <iconUrl>https://github.com/VirtoCommerce/vc-module-product-recommendations/raw/master/VirtoCommerce.ProductRecommendationsModule.Web/Content/logo.png</iconUrl>
+    <iconUrl>https://github.com/VirtoCommerce/vc-module-product-recommendations/raw/dev/VirtoCommerce.ProductRecommendationsModule.Web/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
     <copyright>Copyright © 2017 Virto Commerce. All rights reserved</copyright>
     <tags>recommendations</tags>
@@ -61,8 +61,8 @@
                 <name>Recommendations.Catalog.ChunkSize</name>
                 <valueType>integer</valueType>
                 <title>Chunk size of catalog upload file</title>
-                <description>Set maximum size of catalog upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
-                <defaultValue>204800</defaultValue>
+                <description>Set maximum size of catalog upload file (in MB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
+                <defaultValue>200</defaultValue>
             </setting>
             <setting>
                 <name>Recommendations.UsageEvents.MaximumNumber</name>
@@ -75,8 +75,8 @@
                 <name>Recommendations.UsageEvents.ChunkSize</name>
                 <valueType>integer</valueType>
                 <title>Chunk size of usage events upload file</title>
-                <description>Set maximum size of usage event upload file (in KB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
-                <defaultValue>204800</defaultValue>
+                <description>Set maximum size of usage event upload file (in MB). If file will exceed this size, it will be separated to multiple files with size no more than specified in this setting.</description>
+                <defaultValue>200</defaultValue>
             </setting>
         </group>
     </settings>

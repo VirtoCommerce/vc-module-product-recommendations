@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using VirtoCommerce.Domain.Store.Services;
-using VirtoCommerce.ProductRecommendationsModule.Core.Model;
+using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
-using VirtoCommerce.ProductRecommendationsModule.Data.Model;
+using VirtoCommerce.ProductRecommendationsModule.Data.CognitiveServices;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 {
@@ -15,98 +11,37 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
     {
         private readonly IStoreService _storeService;
 
-        private const string UserToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/user?userId={2}&buildId={3}&numberOfResults={4}";
-
-        private const string DefaultRequestApiKeyHeader = "Ocp-Apim-Subscription-Key";
-
-        private readonly HttpClient _httpClient;
-
         public RecommendationsService(IStoreService storeService)
         {
             _storeService = storeService;
-
-            _httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromMinutes(1)
-            };
         }
 
         public async Task<string[]> GetCustomerRecommendationsAsync(string storeId, string customerId, int numberOfResults)
         {
-            return await GetRecommendationsAsync(UserToItemRecommendationsUrlFormat, storeId, customerId, numberOfResults);
+            return await GetRecommendationsAsync(RecommendationsApi.GetCustomerRecommendationsAsync, storeId, customerId, numberOfResults);
         }
 
-        private async Task<string[]> GetRecommendationsAsync(string urlFormat, string storeId, string entityId, int numberOfResults)
+        private async Task<string[]> GetRecommendationsAsync(Func<string, object[], Task<string[]>> apiCall, string storeId, string entityId, int numberOfResults)
         {
             var store = _storeService.GetById(storeId);
 
-            var apiKeySetting = store.Settings.First(x => x.Name == "Recommendations.ApiKey");
-            var baseUrlSetting = store.Settings.First(x => x.Name == "Recommendations.BaseUrl");
-            var modelIdSetting = store.Settings.First(x => x.Name == "Recommendations.ModelId");
-            var buildIdSetting = store.Settings.First(x => x.Name == "Recommendations.BuildId");
+            var apiKey = store.Settings.GetSettingValue<string>("Recommendations.ApiKey", null);
+            var baseUri = store.Settings.GetSettingValue<string>("Recommendations.BaseUrl", null);
+            var modelId = store.Settings.GetSettingValue<string>("Recommendations.ModelId", null);
+            var buildId = store.Settings.GetSettingValue<string>("Recommendations.BuildId", null);
 
-            var baseUri = baseUrlSetting.Value;
-            var apiKey = apiKeySetting.Value;
-            var modelId = modelIdSetting.Value;
-            var buildId = buildIdSetting.Value;
-
-            var exceptionFormat = "{0} must be provided.";
+            var exceptionFormat = "Recommendations API {0} must be provided.";
 
             if (string.IsNullOrEmpty(apiKey))
-                throw new Exception(string.Format(exceptionFormat, apiKeySetting.Title));
+                throw new Exception(string.Format(exceptionFormat, "Key"));
             if (string.IsNullOrEmpty(baseUri))
-                throw new Exception(string.Format(exceptionFormat, baseUrlSetting.Title));
+                throw new Exception(string.Format(exceptionFormat, "URL"));
             if (string.IsNullOrEmpty(modelId))
-                throw new Exception(string.Format(exceptionFormat, modelIdSetting.Title));
+                throw new Exception(string.Format(exceptionFormat, "Model ID"));
             if (string.IsNullOrEmpty(buildId))
-                throw new Exception(string.Format(exceptionFormat, buildIdSetting.Title));
+                throw new Exception(string.Format(exceptionFormat, "Build ID"));
 
-            var url = string.Format(urlFormat, baseUri, modelId, entityId, buildId, numberOfResults);
-
-            return await GetRecommendatinsAsync(_httpClient, apiKey, url);
-        }
-
-        private async Task<string[]> GetRecommendatinsAsync(HttpClient httpClient, string apiKey, string url)
-        {
-            var result = new List<string>();
-
-            httpClient.DefaultRequestHeaders.Clear();
-            httpClient.DefaultRequestHeaders.Add(DefaultRequestApiKeyHeader, apiKey);
-
-            var response = await httpClient.GetAsync(url);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception(string.Format("Error {0}: Failed to get recommendations, Reason: {1}", response.StatusCode, ExtractErrorInfo(response)));
-            }
-
-            var jsonString = await response.Content.ReadAsStringAsync();
-
-            var recommendedItemSets = JsonConvert.DeserializeObject<RecommendedItemSets>(jsonString);
-
-            if (recommendedItemSets?.Sets != null)
-            {
-                foreach (var recommendedItemSet in recommendedItemSets.Sets.Where(recommendedItemSet => recommendedItemSet.Items != null))
-                {
-                    result.AddRange(recommendedItemSet.Items.Select(recommendedItem => recommendedItem.Id));
-                }
-            }
-
-            return result.ToArray();
-        }
-
-        private static string ExtractErrorInfo(HttpResponseMessage response)
-        {
-            string detailedReason = null;
-
-            if (response.Content != null)
-            {
-                detailedReason = response.Content.ReadAsStringAsync().Result;
-            }
-
-            var errorMsg = detailedReason == null ? response.ReasonPhrase : response.ReasonPhrase + "->" + detailedReason;
-
-            return errorMsg;
+            return await apiCall(apiKey, new object[] { baseUri, modelId, entityId, buildId, numberOfResults });
         }
     }
 }

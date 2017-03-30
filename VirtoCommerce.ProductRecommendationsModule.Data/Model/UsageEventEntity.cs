@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.ProductRecommendationsModule.Core.Model;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
 {
-    public class UsageEventEntity : Entity
+    public class UsageEventEntity : AuditableEntity
     {
         [Required]
         [StringLength(64)]
@@ -23,8 +22,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
         [Required]
         [StringLength(64)]
         public string EventType { get; set; }
-        
-        public DateTime Created { get; set; }
 
         public virtual UsageEvent ToModel(UsageEvent usageEvent)
         {
@@ -32,11 +29,14 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
                 throw new ArgumentNullException("usageEvent");
 
             usageEvent.Id = Id;
+            usageEvent.CreatedBy = CreatedBy;
+            usageEvent.CreatedDate = CreatedDate;
+            usageEvent.ModifiedBy = ModifiedBy;
+            usageEvent.ModifiedDate = ModifiedDate;
             usageEvent.CustomerId = CustomerId;
             usageEvent.StoreId = StoreId;
             usageEvent.ItemId = ItemId;
             usageEvent.EventType = (UsageEventType)Enum.Parse(typeof(UsageEventType), EventType);
-            usageEvent.Created = Created;
 
             return usageEvent;
         }
@@ -49,11 +49,14 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Model
             pkMap.AddPair(usageEvent, this);
 
             Id = usageEvent.Id;
+            CreatedBy = usageEvent.CreatedBy;
+            CreatedDate = usageEvent.CreatedDate;
+            ModifiedBy = usageEvent.ModifiedBy;
+            ModifiedDate = usageEvent.ModifiedDate;
             CustomerId = usageEvent.CustomerId;
             StoreId = usageEvent.StoreId;
             ItemId = usageEvent.ItemId;
             EventType = usageEvent.EventType.ToString();
-            Created = usageEvent.Created;
 
             return this;
         }
