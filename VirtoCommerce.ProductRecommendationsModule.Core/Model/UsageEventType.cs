@@ -6,6 +6,6 @@
         RecommendationClick,
         AddShopCart,
         RemoveShopCart,
-        Purchase = 0
+        Purchase
     }
 }
