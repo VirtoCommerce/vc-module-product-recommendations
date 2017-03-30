@@ -1,30 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Store.Model;
-using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Domain.Store.Services;
+using VirtoCommerce.Platform.Core.Assets;
+using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.ProductRecommendationsModule.Web.Model;
 using SearchCriteria = VirtoCommerce.Domain.Catalog.Model.SearchCriteria;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
 {
     public class CsvCatalogExporter : CsvExporter
     {
+        private readonly IStoreService _storeService;
+        private readonly ICatalogService _catalogService;
         private readonly ICatalogSearchService _catalogSearchService;
         private readonly IItemService _productService;
 
-        public CsvCatalogExporter(ICatalogSearchService catalogSearchService, IItemService productService)
+        public CsvCatalogExporter(IStoreService storeService, ICatalogService catalogService, ICatalogSearchService catalogSearchService, IItemService productService,
+            IPushNotificationManager pushNotifier, IBlobStorageProvider blobStorageProvider, IBlobUrlResolver blobUrlResolver) : base(pushNotifier, blobStorageProvider, blobUrlResolver)
         {
+            _storeService = storeService;
+            _catalogService = catalogService;
             _catalogSearchService = catalogSearchService;
             _productService = productService;
         }
-        public void DoCatalogExport(Stream outStream, string fileName, Store store, Catalog catalog, Action<ExportImportProgressInfo> progressCallback)
+
+        public void DoCatalogExport(string storeId, ExportPushNotification notification)
         {
-            DoExport(outStream, fileName, store.Settings.GetSettingValue("Recommendations.Catalog.ChunkSize", 200) * 1024 * 1024,
-                "products", () => LoadProducts(store, catalog).Select(x => new CsvProduct(x)).ToArray(), new CsvProductMap(), progressCallback);
+            var store = _storeService.GetById(storeId);
+            if (store == null)
+            {
+                throw new NullReferenceException("store");
+            }
+            var catalog = _catalogService.GetById(store.Catalog);
+            if (catalog == null)
+            {
+                throw new NullReferenceException("catalog");
+            }
+
+            DoExport(catalog.Name, store.Settings.GetSettingValue("Recommendations.Catalog.ChunkSize", 200) * 1024 * 1024,
+                "products", () => LoadProducts(store, catalog).Select(x => new CsvProduct(x)).ToArray(), new CsvProductMap(), notification);
         }
         
         private ICollection<CatalogProduct> LoadProducts(Store store, Catalog catalog)

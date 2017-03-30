@@ -2,17 +2,22 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Moq;
 using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Store.Model;
+using VirtoCommerce.Domain.Store.Services;
+using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Data.Assets;
 using VirtoCommerce.ProductRecommendationsModule.Core.Model;
 using VirtoCommerce.ProductRecommendationsModule.Core.Model.Search;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
 using VirtoCommerce.ProductRecommendationsModule.Web.Export;
+using VirtoCommerce.ProductRecommendationsModule.Web.Model;
 using Xunit;
 using SearchCriteria = VirtoCommerce.Domain.Catalog.Model.SearchCriteria;
 using SearchResult = VirtoCommerce.Domain.Catalog.Model.SearchResult;
@@ -21,29 +26,36 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
 {
     public class ExportTest
     {
+        private readonly string _location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private const int MaximumNumberOfUsageEvents = 5000000;
 
         [Fact]
         public void ExportCatalogTest()
         {
-            var searchService = GetCatalogSearchService();
+            var storeService = GetStoreService();
+            var catalogService = GetCatalogService();
+            var catalogSearchService = GetCatalogSearchService();
             var productService = GetProductService();
-            var csvCatalogExporter = new CsvCatalogExporter(searchService, productService);
-            ExportTestHelper(x => csvCatalogExporter.DoCatalogExport(x, "fileName", GetStore(), GetCatalog(), y => { }), GetWellFormedCatalogCsv());
+            var blobProvider = new FileSystemBlobProvider(_location);
+            var csvCatalogExporter = new CsvCatalogExporter(storeService, catalogService, catalogSearchService, productService, new Mock<IPushNotificationManager>().Object, blobProvider, blobProvider);
+            csvCatalogExporter.DoCatalogExport("Test", new ExportPushNotification(null, null));
+            ExportTestHelper("Test", GetWellFormedCatalogCsv());
         }
 
         [Fact]
         public void ExportUsageEventsTest()
         {
-            var csvUsageEventsExporter = new CsvUsageEventsExporter(GetUsageEventService());
-            ExportTestHelper(x => csvUsageEventsExporter.DoUsageEventsExport(x, "fileName", GetStore(), y => { }), GetWellFormedUsageEventsCsv());
+            var storeService = GetStoreService();
+            var blobProvider = new FileSystemBlobProvider(_location);
+            var csvUsageEventsExporter = new CsvUsageEventsExporter(storeService, GetUsageEventService(), new Mock<IPushNotificationManager>().Object, blobProvider, blobProvider);
+            csvUsageEventsExporter.DoUsageEventsExport("Test", new ExportPushNotification(null, null));
+            ExportTestHelper("Test Events", GetWellFormedUsageEventsCsv());
         }
 
-        private void ExportTestHelper(Action<Stream> exporter, string wellFormedCsv)
+        private void ExportTestHelper(string fileName, string wellFormedCsv)
         {
-            using (var stream = new MemoryStream())
+            using (var stream = new FileStream(_location + "/temp/" + fileName + ".zip", FileMode.Open, FileAccess.Read))
             {
-                exporter(stream);
                 stream.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
                 using (var archive = new ZipArchive(stream))
@@ -85,22 +97,28 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
             return usageEventService.Object;
         }
 
-        private Store GetStore()
+        private IStoreService GetStoreService()
         {
-            var store = new Store
-            {
-                Settings = new[]
+            var storeService = new Mock<IStoreService>();
+            storeService.Setup(x => x.GetById(It.Is<string>(y => y == "Test")))
+                .Returns<string>(x => new Store
                 {
-                    new SettingEntry { Name = "Recommendations.UsageEvents.MaximumNumber", Value = MaximumNumberOfUsageEvents.ToString() }
-                }
-            };
-            return store;
+                    Name = "Test",
+                    Catalog = "Test",
+                    Settings = new[]
+                    {
+                        new SettingEntry { Name = "Recommendations.UsageEvents.MaximumNumber", Value = MaximumNumberOfUsageEvents.ToString() }
+                    }
+                });
+            return storeService.Object;
         }
 
-        private Catalog GetCatalog()
+        private ICatalogService GetCatalogService()
         {
-            var catalog = new Catalog();
-            return catalog;
+            var catalogService = new Mock<ICatalogService>();
+            catalogService.Setup(x => x.GetById(It.IsAny<string>()))
+                .Returns<string>(x => new Catalog { Name = "Test" });
+            return catalogService.Object;
         }
 
         private Category[] GetCategories()

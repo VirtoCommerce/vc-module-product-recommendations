@@ -181,7 +181,6 @@
     <Compile Include="Export\CsvUsageEvent.cs" />
     <Compile Include="Export\CsvUsageEventsExporter.cs" />
     <Compile Include="Export\CsvUsageEventMap.cs" />
-    <Compile Include="Export\Exporter.cs" />
     <Compile Include="Model\ExportPushNotification.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
