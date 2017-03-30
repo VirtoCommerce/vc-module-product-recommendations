@@ -64,7 +64,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
                                 // From https://msdn.microsoft.com/en-us/library/kyaxdd3x(v=vs.110).aspx:
                                 // "The GetProperties method does not return properties in a particular order, such as alphabetical or declaration order.
                                 // Your code must not depend on the order in which properties are returned, because that order varies."
-                                // Because we must export columns in specific order (see below), I created this map
+                                // Because we must export columns in specific order, I created this map
                                 csvWriter.Configuration.RegisterClassMap(entityClassMap);
 
                                 progressInfo.TotalCount = entities.Length;
