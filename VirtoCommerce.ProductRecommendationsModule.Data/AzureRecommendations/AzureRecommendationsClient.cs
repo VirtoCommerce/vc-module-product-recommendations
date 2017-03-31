@@ -9,12 +9,13 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations
 {
     public class AzureRecommendationsClient : IAzureRecommendationsClient
     {
-        private const string UserToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/user?userId={2}&buildId={3}&numberOfResults={4}";
+        private const string UserToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/user?userId={2}&buildId={3}&numberOfResults={4}&itemsIds={5}";
         private const string DefaultRequestApiKeyHeader = "Ocp-Apim-Subscription-Key";
 
-        public async Task<string[]> GetCustomerRecommendationsAsync(string apiKey, string baseUrl, string modelId, string userId, string buildId, int numberOfResults)
+        public async Task<string[]> GetCustomerRecommendationsAsync(string apiKey, string baseUrl, string modelId, string userId, string buildId, int numberOfResults, string[] productsIds)
         {
-            return await GetRecommendatinsAsync(apiKey, string.Format(UserToItemRecommendationsUrlFormat, baseUrl, modelId, userId, buildId, numberOfResults));
+            return await GetRecommendatinsAsync(apiKey, string.Format(UserToItemRecommendationsUrlFormat,
+                baseUrl, modelId, userId, buildId, numberOfResults, productsIds != null ? string.Join(",", productsIds) : string.Empty));
         }
 
         private async Task<string[]> GetRecommendatinsAsync(string apiKey, string url)

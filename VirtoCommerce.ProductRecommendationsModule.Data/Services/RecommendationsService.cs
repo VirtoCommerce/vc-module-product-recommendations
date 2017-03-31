@@ -18,11 +18,11 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             _azureRecommendationsClient = azureRecommendationsClient;
         }
 
-        public async Task<string[]> GetCustomerRecommendationsAsync(string storeId, string customerId, int numberOfResults)
+        public async Task<string[]> GetCustomerRecommendationsAsync(string storeId, string customerId, string[] productsIds, int numberOfResults)
         {
             string apiKey, baseUrl, modelId, buildId;
             GetRecommendationsSettings(storeId, out apiKey, out baseUrl, out modelId, out buildId);
-            return await _azureRecommendationsClient.GetCustomerRecommendationsAsync(apiKey, baseUrl, modelId, customerId, buildId, numberOfResults);
+            return await _azureRecommendationsClient.GetCustomerRecommendationsAsync(apiKey, baseUrl, modelId, customerId, buildId, numberOfResults, productsIds);
         }
 
         private void GetRecommendationsSettings(string storeId, out string apiKey, out string baseUrl, out string modelId, out string buildId)
