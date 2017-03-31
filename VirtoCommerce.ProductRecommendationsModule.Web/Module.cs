@@ -5,6 +5,7 @@ using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
+using VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations;
 using VirtoCommerce.ProductRecommendationsModule.Data.Repositories;
 using VirtoCommerce.ProductRecommendationsModule.Data.Services;
 
@@ -33,6 +34,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web
         {
             _container.RegisterType<IUsageEventRepository>(new InjectionFactory(c => new UsageEventRepository(ConnectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
             _container.RegisterType<IUsageEventService, UsageEventService>();
+            _container.RegisterType<IAzureRecommendationsClient, AzureRecommendationsClient>();
             _container.RegisterType<IRecommendationsService, RecommendationsService>();
         }
 

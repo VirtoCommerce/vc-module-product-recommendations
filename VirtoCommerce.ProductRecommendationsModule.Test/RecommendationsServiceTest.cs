@@ -4,6 +4,7 @@ using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
+using VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations;
 using VirtoCommerce.ProductRecommendationsModule.Data.Services;
 using Xunit;
 
@@ -21,7 +22,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Test
 
         private IRecommendationsService GetRecommendationsService()
         {
-            return new RecommendationsService(GetStoreService());
+            return new RecommendationsService(GetStoreService(), new AzureRecommendationsClient());
         }
 
         private IStoreService GetStoreService()

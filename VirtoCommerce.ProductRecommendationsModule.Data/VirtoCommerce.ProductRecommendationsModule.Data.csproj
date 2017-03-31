@@ -85,7 +85,8 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CognitiveServices\RecommendationsApi.cs" />
+    <Compile Include="AzureRecommendations\IAzureRecommendationsClient.cs" />
+    <Compile Include="AzureRecommendations\AzureRecommendationsClient.cs" />
     <Compile Include="Migrations\201703280649559_Initial.cs" />
     <Compile Include="Migrations\201703280649559_Initial.Designer.cs">
       <DependentUpon>201703280649559_Initial.cs</DependentUpon>
@@ -95,9 +96,9 @@
       <DependentUpon>201703300542438_UsageEventAuditable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="CognitiveServices\RecommendedItem.cs" />
-    <Compile Include="CognitiveServices\RecommendedItemSet.cs" />
-    <Compile Include="CognitiveServices\RecommendedItemSets.cs" />
+    <Compile Include="AzureRecommendations\RecommendedItem.cs" />
+    <Compile Include="AzureRecommendations\RecommendedItemSet.cs" />
+    <Compile Include="AzureRecommendations\RecommendedItemSets.cs" />
     <Compile Include="Model\UsageEventEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IUsageEventRepository.cs" />

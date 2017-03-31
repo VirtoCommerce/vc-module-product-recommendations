@@ -4,21 +4,20 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using VirtoCommerce.ProductRecommendationsModule.Data.Model;
 
-namespace VirtoCommerce.ProductRecommendationsModule.Data.CognitiveServices
+namespace VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations
 {
-    public static class RecommendationsApi
+    public class AzureRecommendationsClient : IAzureRecommendationsClient
     {
         private const string UserToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/user?userId={2}&buildId={3}&numberOfResults={4}";
         private const string DefaultRequestApiKeyHeader = "Ocp-Apim-Subscription-Key";
 
-        public static async Task<string[]> GetCustomerRecommendationsAsync(string apiKey, params object[] urlArgs)
+        public async Task<string[]> GetCustomerRecommendationsAsync(string apiKey, string baseUrl, string modelId, string userId, string buildId, int numberOfResults)
         {
-            return await GetRecommendatinsAsync(apiKey, string.Format(UserToItemRecommendationsUrlFormat, urlArgs));
+            return await GetRecommendatinsAsync(apiKey, string.Format(UserToItemRecommendationsUrlFormat, baseUrl, modelId, userId, buildId, numberOfResults));
         }
 
-        private static async Task<string[]> GetRecommendatinsAsync(string apiKey, string url)
+        private async Task<string[]> GetRecommendatinsAsync(string apiKey, string url)
         {
             var result = new List<string>();
 
@@ -48,7 +47,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.CognitiveServices
             return result.ToArray();
         }
 
-        private static string ExtractErrorInfo(HttpResponseMessage response)
+        private string ExtractErrorInfo(HttpResponseMessage response)
         {
             string detailedReason = null;
 
