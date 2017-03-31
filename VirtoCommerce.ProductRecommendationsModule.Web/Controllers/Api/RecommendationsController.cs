@@ -35,12 +35,12 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
             _pushNotifier = pushNotifier;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("")]
         [ResponseType(typeof(string[]))]
-        public async Task<IHttpActionResult> GetCustomerRecommendations(string storeId, string customerId, string[] productIds, int numberOfResults)
+        public async Task<IHttpActionResult> GetCustomerRecommendations(CustomerRecommendationsContext context)
         {
-            var result = await _recommendationsService.GetCustomerRecommendationsAsync(storeId, customerId, productIds, numberOfResults);
+            var result = await _recommendationsService.GetCustomerRecommendationsAsync(context.StoreId, context.CustomerId, context.ProductIds, context.NumberOfResults);
             return Ok(result);
         }
 
