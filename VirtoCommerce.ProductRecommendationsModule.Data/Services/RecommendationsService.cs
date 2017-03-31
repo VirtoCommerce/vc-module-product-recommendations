@@ -4,6 +4,7 @@ using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
 using VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations;
+using VirtoCommerce.ProductRecommendationsModule.Data.Model;
 
 namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 {
@@ -20,19 +21,18 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 
         public async Task<string[]> GetCustomerRecommendationsAsync(string storeId, string customerId, string[] productsIds, int numberOfResults)
         {
-            string apiKey, baseUrl, modelId, buildId;
-            GetRecommendationsSettings(storeId, out apiKey, out baseUrl, out modelId, out buildId);
-            return await _azureRecommendationsClient.GetCustomerRecommendationsAsync(apiKey, baseUrl, modelId, customerId, buildId, numberOfResults, productsIds);
+            var settins = GetRecommendationsSettings(storeId);
+            return await _azureRecommendationsClient.GetCustomerRecommendationsAsync(settins.ApiKey, settins.BaseUrl, settins.ModelId, customerId, settins.BuildId, numberOfResults, productsIds);
         }
 
-        private void GetRecommendationsSettings(string storeId, out string apiKey, out string baseUrl, out string modelId, out string buildId)
+        private RecommendationServiceSettings GetRecommendationsSettings(string storeId)
         {
             var store = _storeService.GetById(storeId);
 
-            apiKey = store.Settings.GetSettingValue<string>("Recommendations.ApiKey", null);
-            baseUrl = store.Settings.GetSettingValue<string>("Recommendations.BaseUrl", null);
-            modelId = store.Settings.GetSettingValue<string>("Recommendations.ModelId", null);
-            buildId = store.Settings.GetSettingValue<string>("Recommendations.BuildId", null);
+            var apiKey = store.Settings.GetSettingValue<string>("Recommendations.ApiKey", null);
+            var baseUrl = store.Settings.GetSettingValue<string>("Recommendations.BaseUrl", null);
+            var modelId = store.Settings.GetSettingValue<string>("Recommendations.ModelId", null);
+            var buildId = store.Settings.GetSettingValue<string>("Recommendations.BuildId", null);
 
             var exceptionFormat = "Recommendations API {0} must be provided.";
 
@@ -44,6 +44,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
                 throw new Exception(string.Format(exceptionFormat, "Model ID"));
             if (string.IsNullOrEmpty(buildId))
                 throw new Exception(string.Format(exceptionFormat, "Build ID"));
+
+            return new RecommendationServiceSettings(apiKey, baseUrl, modelId, buildId);
         }
     }
 }

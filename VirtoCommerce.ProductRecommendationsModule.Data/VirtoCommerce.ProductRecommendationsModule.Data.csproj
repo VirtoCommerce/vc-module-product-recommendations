@@ -99,6 +99,7 @@
     <Compile Include="AzureRecommendations\RecommendedItem.cs" />
     <Compile Include="AzureRecommendations\RecommendedItemSet.cs" />
     <Compile Include="AzureRecommendations\RecommendedItemSets.cs" />
+    <Compile Include="Model\RecommendationServiceSettings.cs" />
     <Compile Include="Model\UsageEventEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IUsageEventRepository.cs" />
