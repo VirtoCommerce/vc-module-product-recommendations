@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <module>
     <id>VirtoCommerce.ProductRecommendations</id>
-    <version>1.0.0</version>
-    <platformVersion>2.13.0</platformVersion>
+    <version>0.1.0</version>
+    <platformVersion>2.13.1</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.21.0" />
         <dependency id="VirtoCommerce.Catalog" version="2.16.2" />
         <dependency id="VirtoCommerce.Store" version="2.13.0" />
     </dependencies>
 
-    <title>Product recommendations module</title>
+    <title>Product recommendations module (preview)</title>
     <description>Automatically recommend items on your product page. Provide recommendations unique to customer and personalize their experience.</description>
     <authors>
         <author>Virto Commerce</author>
@@ -18,7 +18,7 @@
         <owner>Virto Commerce</owner>
     </owners>
     <projectUrl>https://virtocommerce.com/virto-product-recommendations-module</projectUrl>
-    <iconUrl>https://github.com/VirtoCommerce/vc-module-product-recommendations/raw/dev/VirtoCommerce.ProductRecommendationsModule.Web/Content/logo.png</iconUrl>
+    <iconUrl>https://github.com/VirtoCommerce/vc-module-product-recommendations/raw/master/VirtoCommerce.ProductRecommendationsModule.Web/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
     <copyright>Copyright © 2017 Virto Commerce. All rights reserved</copyright>
     <tags>recommendations</tags>
