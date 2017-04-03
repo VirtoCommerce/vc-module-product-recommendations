@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using CsvHelper;
 using CsvHelper.Configuration;
 using VirtoCommerce.Platform.Core.Assets;
@@ -53,63 +52,62 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             {
                 progressInfo.Description = string.Format("{0} of {1} {2} processed", progressInfo.ProcessedCount, progressInfo.TotalCount, entitiesType);
                 progressCallback(progressInfo);
-            });
+            }).Throttle(TimeSpan.FromSeconds(1));
 
             var relativeUrl = "temp/" + fileName + ".zip";
             using (var blobStream = _blobStorageProvider.OpenWrite(relativeUrl))
             {
                 try
                 {
-                    using (new Timer(state => updateProgress(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1)))
+                    // Because of Recommendation API file uploading limit, we need to split our csv file to parts with size no more than this limit
+                    using (var archive = new ZipArchive(blobStream, ZipArchiveMode.Create, true, new UTF8Encoding(false)))
                     {
-                        using (var archive = new ZipArchive(blobStream, ZipArchiveMode.Create, true, new UTF8Encoding(false)))
+                        var partIndex = 1;
+                        using (var stream = new MemoryStream())
                         {
-                            var partIndex = 1;
-                            using (var stream = new MemoryStream())
+                            using (var streamWriter = new StreamWriter(stream, new UTF8Encoding(false), 1024, true) { AutoFlush = true })
                             {
-                                using (var streamWriter = new StreamWriter(stream, new UTF8Encoding(false), 1024, true) { AutoFlush = true })
+                                using (var csvWriter = new CsvWriter(streamWriter))
                                 {
-                                    using (var csvWriter = new CsvWriter(streamWriter))
+                                    progressCallback(progressInfo);
+
+                                    var entities = entityFactory().ToArray();
+
+                                    csvWriter.Configuration.Delimiter = ",";
+                                    csvWriter.Configuration.RegisterClassMap(entityClassMap);
+
+                                    progressInfo.TotalCount = entities.Length;
+
+                                    for (var index = 0; index < entities.Length; index++)
                                     {
-                                        progressCallback(progressInfo);
-                                        
-                                        var entities = entityFactory().ToArray();
-
-                                        csvWriter.Configuration.Delimiter = ",";
-                                        csvWriter.Configuration.RegisterClassMap(entityClassMap);
-
-                                        progressInfo.TotalCount = entities.Length;
-
-                                        for (var index = 0; index < entities.Length; index++)
+                                        try
                                         {
-                                            try
-                                            {
-                                                var previousSize = (int) stream.Length;
-                                                csvWriter.WriteRecord(entities[index]);
-                                                
-                                                if (stream.Length > chunkSize)
-                                                {
-                                                    WriteEntry(archive, fileName, ref partIndex, x => x.Write(stream.GetBuffer(), 0, previousSize - 2));
-                                                    stream.SetLength(0);
-                                                    --index;
-                                                }
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                progressInfo.Errors.Add(ex.ToString());
-                                                progressCallback(progressInfo);
-                                            }
+                                            var previousSize = (int) stream.Length;
+                                            csvWriter.WriteRecord(entities[index]);
 
-                                            progressInfo.ProcessedCount = index + 1;
+                                            if (stream.Length > chunkSize)
+                                            {
+                                                WriteEntry(archive, fileName, ref partIndex, x => x.Write(stream.GetBuffer(), 0, previousSize - 2));
+                                                stream.SetLength(0);
+                                                --index;
+                                            }
                                         }
+                                        catch (Exception ex)
+                                        {
+                                            progressInfo.Errors.Add(ex.ToString());
+                                            progressCallback(progressInfo);
+                                        }
+
+                                        progressInfo.ProcessedCount = index + 1;
+                                        updateProgress();
                                     }
                                 }
-                                
-                                WriteEntry(archive, fileName, ref partIndex, stream.WriteTo, true);
                             }
+
+                            WriteEntry(archive, fileName, ref partIndex, stream.WriteTo, true);
                         }
-                        updateProgress();
                     }
+                    updateProgress();
                     notification.DownloadUrl = _blobUrlResolver.GetAbsoluteUrl(relativeUrl);
                 }
                 catch (Exception ex)

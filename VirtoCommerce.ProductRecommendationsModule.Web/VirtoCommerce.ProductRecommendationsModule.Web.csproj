@@ -181,6 +181,7 @@
     <Compile Include="Export\CsvUsageEvent.cs" />
     <Compile Include="Export\CsvUsageEventsExporter.cs" />
     <Compile Include="Export\CsvUsageEventMap.cs" />
+    <Compile Include="Model\ActionThrottlingExtensions.cs" />
     <Compile Include="Model\CustomerRecommendationsContext.cs" />
     <Compile Include="Model\ExportPushNotification.cs" />
     <Compile Include="Module.cs" />
