@@ -15,9 +15,9 @@ Install the module:
 ```
 * * `provider` key can correspond to the following values:
 * * * `Cognitive` - provide a products from the Azure Machine Learning Service
-* * * `Association` - provide a products from accosiations lists, configured in Catalog module
-* * for the `product_ids` key we should set the current product id
-* * `size` key indicates the lenght of the result products list
+* * * `Association` - provide a products from associations lists, configured in Catalog module
+* * for the `product_ids` key we should set the current product id, or comma-separated identifiers in other cases. This is an optional parameter
+* * `size` key indicates the lenght of the result products list we want to receive
 
 2. User events gathering configuration
 
