@@ -11,7 +11,8 @@
     <title>Product recommendations module (preview)</title>
     <description>Automatically recommend items on your product page. Provide recommendations unique to customer and personalize their experience.</description>
     <authors>
-        <author>Virto Commerce</author>
+        <author>Aleksandr Vishnyakov</author>
+        <author>Vitalii Efremov</author>
     </authors>
     <owners>
         <owner>Virto Commerce</owner>
