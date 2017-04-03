@@ -26,7 +26,7 @@ The products recommendations are based on the history of items that were of inte
 "recommendations_enable": true
 ```
 
-# Module configuration
+## Module configuration
 1. Collect data:
 * Open Store where you plan to use recommendations
  * Open Recommendations widget
