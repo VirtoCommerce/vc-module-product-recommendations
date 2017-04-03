@@ -5,7 +5,6 @@
     <platformVersion>2.13.1</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.21.0" />
-        <dependency id="VirtoCommerce.Catalog" version="2.16.2" />
         <dependency id="VirtoCommerce.Store" version="2.13.0" />
     </dependencies>
 
