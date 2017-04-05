@@ -21,10 +21,12 @@ Install the module:
 
 2. User events gathering configuration
 
-The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this open settings file `settings_data.json` and provide new setting entry:
+The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this open settings file `settings_data.json` and provide new setting entry for desired theme:
 ```json
-"recommendations_enable": true
+"collect_user_events_enabled": true
 ```
+
+For custom themes the same setting entry should be provided as well.
 
 ## Module configuration
 1. Collect data:
