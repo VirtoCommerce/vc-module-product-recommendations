@@ -30,7 +30,7 @@ The products recommendations are based on the history of items that were of inte
 
 There will be a little more configuration steps for custom theme.
 * Provide `collect_user_events_enabled` setting entry in settings file of your theme as discribed in previous step.
-* Reference `interactor.min.js` library.
+* Reference `interactor.js` library.
 * Include next script block in the footer template.
 ```js
 window.startRecordInteraction = function()
