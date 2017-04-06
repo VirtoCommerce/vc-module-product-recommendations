@@ -46,18 +46,6 @@
                 <description>Microsoft Cognitive Services Recommendations API URL</description>
             </setting>
             <setting>
-                <name>Recommendations.ModelId</name>
-                <valueType>string</valueType>
-                <title>Model ID</title>
-                <description>Recommendations API Model ID</description>
-            </setting>
-            <setting>
-                <name>Recommendations.BuildId</name>
-                <valueType>string</valueType>
-                <title>Build ID</title>
-                <description>Recommendations API Build ID</description>
-            </setting>
-            <setting>
                 <name>Recommendations.Catalog.ChunkSize</name>
                 <valueType>integer</valueType>
                 <title>Chunk size of catalog upload file</title>

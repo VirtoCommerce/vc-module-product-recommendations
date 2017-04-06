@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.ProductRecommendationsModule.Core.Model;
 using VirtoCommerce.ProductRecommendationsModule.Core.Services;
 using VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations;
 using VirtoCommerce.ProductRecommendationsModule.Data.Model;
@@ -19,10 +20,28 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             _azureRecommendationsClient = azureRecommendationsClient;
         }
 
-        public async Task<string[]> GetCustomerRecommendationsAsync(string storeId, string customerId, string[] productsIds, int numberOfResults)
+        public async Task<string[]> GetRecommendationsAsync(RecommendationsEvaluationContext context)
         {
-            var settins = GetRecommendationsSettings(storeId);
-            return await _azureRecommendationsClient.GetCustomerRecommendationsAsync(settins.ApiKey, settins.BaseUrl, settins.ModelId, customerId, settins.BuildId, numberOfResults, productsIds);
+            AzureRecommendationType azureRecommendationType;
+            var isAzureRecommendations = Enum.TryParse(context.Type, out azureRecommendationType);
+            if (!isAzureRecommendations)
+            {
+                throw new NotSupportedException();
+            }
+
+            var settins = GetRecommendationsSettings(context.StoreId);
+
+            string[] result;
+            if (azureRecommendationType == AzureRecommendationType.User2Item)
+            {
+                result = await _azureRecommendationsClient.GetCustomerRecommendationsAsync(settins.ApiKey, settins.BaseUrl, context.ModelId,
+                        context.UserId, context.BuildId, context.Take, context.ProductsIds);
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+            return result;
         }
 
         private RecommendationServiceSettings GetRecommendationsSettings(string storeId)
@@ -31,8 +50,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
 
             var apiKey = store.Settings.GetSettingValue<string>("Recommendations.ApiKey", null);
             var baseUrl = store.Settings.GetSettingValue<string>("Recommendations.BaseUrl", null);
-            var modelId = store.Settings.GetSettingValue<string>("Recommendations.ModelId", null);
-            var buildId = store.Settings.GetSettingValue<string>("Recommendations.BuildId", null);
 
             var exceptionFormat = "Recommendations API {0} must be provided.";
 
@@ -40,12 +57,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
                 throw new Exception(string.Format(exceptionFormat, "Key"));
             if (string.IsNullOrEmpty(baseUrl))
                 throw new Exception(string.Format(exceptionFormat, "URL"));
-            if (string.IsNullOrEmpty(modelId))
-                throw new Exception(string.Format(exceptionFormat, "Model ID"));
-            if (string.IsNullOrEmpty(buildId))
-                throw new Exception(string.Format(exceptionFormat, "Build ID"));
 
-            return new RecommendationServiceSettings(apiKey, baseUrl, modelId, buildId);
+            return new RecommendationServiceSettings(apiKey, baseUrl);
         }
     }
 }

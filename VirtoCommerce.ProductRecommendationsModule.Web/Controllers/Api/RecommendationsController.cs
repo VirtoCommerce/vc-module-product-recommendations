@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Hangfire;
+using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.ProductRecommendationsModule.Core.Model;
@@ -38,9 +39,9 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         [HttpPost]
         [Route("")]
         [ResponseType(typeof(string[]))]
-        public async Task<IHttpActionResult> GetCustomerRecommendations(CustomerRecommendationsContext context)
+        public async Task<IHttpActionResult> GetRecommendations(RecommendationsEvaluationContext context)
         {
-            var result = await _recommendationsService.GetCustomerRecommendationsAsync(context.StoreId, context.CustomerId, context.ProductIds, context.NumberOfResults);
+            var result = await _recommendationsService.GetRecommendationsAsync(context);
             return Ok(result);
         }
 

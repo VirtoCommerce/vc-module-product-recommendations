@@ -85,6 +85,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AzureRecommendations\AzureRecommendationType.cs" />
     <Compile Include="AzureRecommendations\IAzureRecommendationsClient.cs" />
     <Compile Include="AzureRecommendations\AzureRecommendationsClient.cs" />
     <Compile Include="Migrations\201703280649559_Initial.cs" />
