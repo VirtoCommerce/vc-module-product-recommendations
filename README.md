@@ -59,11 +59,13 @@ The products recommendations are based on the history of items that were of inte
  
 ![Settings](https://cloud.githubusercontent.com/assets/6369252/24510451/b2e97a90-1582-11e7-91d4-1981dabab136.png)
 
+# Supported types
 ## Personalized recommendations
-Use the purchase history of a particular customer to provide recommendations unique to that customer and personalize their experience.
+Based on users activity (collected usage data) Cognitive Service will form top of iterested products. User will see this products as recommended, excluding products that he/she already seen. If there is no usage history for the user, he/she will see nothing.
 
-## Increase discoverability
-Learn from click patterns to increase your product catalog’s discoverability and boost sales.
+# Planned
+## Product recommendations
+This recommendations will allow your customer to discover products that are likely to be visited by people that have visited the source item.
 
 ## Frequently bought together
 Automatically recommend items on your product page that are likely to be consumed together in the same transaction.
