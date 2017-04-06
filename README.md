@@ -19,12 +19,48 @@ Install the module:
 * * for the `product_ids` key we should set the current product id, or comma-separated identifiers in other cases. This is an optional parameter
 * * `size` key indicates the lenght of the result products list we want to receive
 
-2. User events gathering configuration
+2. User events gathering configuration for standard theme
 
-The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this open settings file `settings_data.json` and provide new setting entry:
+The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this just open settings file `settings_data.json` and provide new setting entry for desired theme:
 ```json
-"recommendations_enable": true
+"collect_user_events_enabled": true
 ```
+
+3. User events gathering configuration for custom themes
+
+There will be a little more configuration steps for custom theme.
+* Provide `collect_user_events_enabled` setting entry in settings file of your theme as discribed in previous step.
+* Reference `interactor.js` library.
+* Include next script block in the footer template.
+```js
+window.startRecordInteraction = function()
+{
+    {% if settings.collect_user_events_enabled %}
+    var interactions = new Interactor({
+        interactions            : true,
+        interactionElements     : ["Click", "AddShopCart", "RemoveShopCart", "RecommendationClick"],
+        interactionEvents       : ["mouseup", "touchend"],
+        endpoint                : "{{ '/storefrontapi/useractions/eventinfo' | absolute_url }}",
+        async                   : true,
+        debug                   : false
+    });
+    {% endif %}
+}
+window.startRecordInteraction();
+```
+
+* * There are few types of user events we can collect: `Click`, `AddShopCart`, `RemoveShopCart`, `RecommendationClick`
+
+* To track a users interactions with an element, simply add the event keyword in CSS attribute of the element. Next block of code show how to collect `Click` events for the products:
+```html
+<a href="{{ product.url | absolute_url }}" class="product-grid-item Click" interactor-arg="{{ product.id }}">
+...
+```
+* * `Click` keyword should be placed in `class` attribute.
+* * Custom attribute `interactor-arg` contains product id that will be pass to the endpoint with other information.
+
+All user events will be collect locally and pass to the endpoint before user leaves the page.
+
 
 ## Module configuration
 1. Collect data:
