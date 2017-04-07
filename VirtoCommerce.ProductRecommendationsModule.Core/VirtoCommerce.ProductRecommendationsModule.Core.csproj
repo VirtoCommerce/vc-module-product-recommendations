@@ -55,7 +55,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Model\RecommendationsContext.cs" />
+    <Compile Include="Model\RecommendationEvalContext.cs" />
     <Compile Include="Model\Search\UsageEventSearchCriteria.cs" />
     <Compile Include="Model\UsageEvent.cs" />
     <Compile Include="Model\UsageEventType.cs" />

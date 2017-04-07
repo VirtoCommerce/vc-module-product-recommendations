@@ -5,6 +5,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Core.Services
 {
     public interface IRecommendationsService
     {
-        Task<string[]> GetRecommendationsAsync(RecommendationsEvaluationContext context);
+        Task<string[]> GetRecommendationsAsync(RecommendationEvalContext context);
     }
 }

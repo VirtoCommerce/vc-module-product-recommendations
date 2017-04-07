@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Settings;
@@ -20,7 +21,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             _azureRecommendationsClient = azureRecommendationsClient;
         }
 
-        public async Task<string[]> GetRecommendationsAsync(RecommendationsEvaluationContext context)
+        public async Task<string[]> GetRecommendationsAsync(RecommendationEvalContext context)
         {
             AzureRecommendationType azureRecommendationType;
             var isAzureRecommendations = Enum.TryParse(context.Type, out azureRecommendationType);
@@ -35,7 +36,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             if (azureRecommendationType == AzureRecommendationType.User2Item)
             {
                 result = await _azureRecommendationsClient.GetCustomerRecommendationsAsync(settins.ApiKey, settins.BaseUrl, context.ModelId,
-                        context.UserId, context.BuildId, context.Take, context.ProductsIds);
+                        context.UserId, context.BuildId, context.Take, context.ProductIds.ToArray());
             }
             else
             {

@@ -39,7 +39,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Controllers.Api
         [HttpPost]
         [Route("")]
         [ResponseType(typeof(string[]))]
-        public async Task<IHttpActionResult> GetRecommendations(RecommendationsEvaluationContext context)
+        public async Task<IHttpActionResult> GetRecommendations(RecommendationEvalContext context)
         {
             var result = await _recommendationsService.GetRecommendationsAsync(context);
             return Ok(result);
