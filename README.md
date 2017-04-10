@@ -6,62 +6,6 @@ Install the module:
 * Automatically: in VC Manager go to Configuration -> Modules -> Product recommendations module (preview) -> Install
 * Manually: download module zip package from https://github.com/VirtoCommerce/vc-module-product-recommendations/releases. In VC Manager go to Configuration -> Modules -> Advanced -> Upload module package -> Install.
 
-## Storefront installation and configuration
-1. Snippet configuration
-* Open template file where you want to display recommended products (ex. product.liquid)
-* Add snipped call with the following code:
-```html
-{% include 'recommendations', provider: 'Cognitive', type: 'Recommendations', product_ids: product.id, size: 5 %}
-```
-* * `provider` key can correspond to the following values:
-* * * `Cognitive` - provide a products from the Azure Machine Learning Service
-* * * `Association` - provide a products from associations lists, configured in Catalog module
-* * for the `product_ids` key we should set the current product id, or comma-separated identifiers in other cases. This is an optional parameter
-* * `size` key indicates the lenght of the result products list we want to receive
-
-2. User events gathering configuration for standard theme
-
-The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this just open settings file `settings_data.json` and provide new setting entry for desired theme:
-```json
-"collect_user_events_enabled": true
-```
-
-3. User events gathering configuration for custom themes
-
-There will be a little more configuration steps for custom theme.
-* Provide `collect_user_events_enabled` setting entry in settings file of your theme as discribed in previous step.
-* Reference `interactor.js` library.
-* Include next script block in the footer template.
-```js
-window.startRecordInteraction = function()
-{
-    {% if settings.collect_user_events_enabled %}
-    var interactions = new Interactor({
-        interactions            : true,
-        interactionElements     : ["Click", "AddShopCart", "RemoveShopCart", "RecommendationClick"],
-        interactionEvents       : ["mouseup", "touchend"],
-        endpoint                : "{{ '/storefrontapi/useractions/eventinfo' | absolute_url }}",
-        async                   : true,
-        debug                   : false
-    });
-    {% endif %}
-}
-window.startRecordInteraction();
-```
-
-* * There are few types of user events we can collect: `Click`, `AddShopCart`, `RemoveShopCart`, `RecommendationClick`
-
-* To track a users interactions with an element, simply add the event keyword in CSS attribute of the element. Next block of code show how to collect `Click` events for the products:
-```html
-<a href="{{ product.url | absolute_url }}" class="product-grid-item Click" interactor-arg="{{ product.id }}">
-...
-```
-* * `Click` keyword should be placed in `class` attribute.
-* * Custom attribute `interactor-arg` contains product id that will be pass to the endpoint with other information.
-
-All user events will be collect locally and pass to the endpoint before user leaves the page.
-
-
 ## Module configuration
 1. Collect data:
 * Open Store where you plan to use recommendations
@@ -105,3 +49,60 @@ This recommendations will allow your customer to discover products that are like
 
 ## Frequently bought together
 Automatically recommend items on your product page that are likely to be consumed together in the same transaction.
+
+
+## Storefront installation and configuration
+1. Snippet configuration
+* Open template file where you want to display recommended products (ex. product.liquid)
+* Add snipped call with the following code:
+```html
+{% include 'recommendations', provider: 'Cognitive', type: 'Recommendations', product_ids: product.id, take: 5 %}
+```
+* * `provider` key can correspond to the following values:
+* * * `Cognitive` - provide a products from the Azure Machine Learning Service
+* * * `Association` - provide a products from associations lists, configured in Catalog module
+* * for the `product_ids` key we should set the current product id, or comma-separated identifiers in other cases. This is an optional parameter
+* * `take` key indicates the lenght of the result products list we want to receive
+
+2. User events gathering configuration for standard theme
+
+The products recommendations are based on the history of items that were of interest to the user. To improve the result set of the products, you should enable option for background collection of user events statistics. To do this just open settings file `settings_data.json` and provide new setting entry for desired theme:
+```json
+"collect_user_events_enabled": true
+```
+
+3. User events gathering configuration for custom themes
+
+There will be a little more configuration steps for custom theme.
+* Provide `collect_user_events_enabled` setting entry in settings file of your theme as discribed in previous step.
+* Reference `interactor.js` library (already included in default theme script bundle).
+* Include next script block in the footer template.
+```js
+window.startRecordInteraction = function()
+{
+    {% if settings.collect_user_events_enabled %}
+    var interactions = new Interactor({
+        interactions            : true,
+        interactionElements     : ["Click", "AddShopCart", "RemoveShopCart", "RecommendationClick"],
+        interactionEvents       : ["mouseup", "touchend"],
+        endpoint                : "{{ '/storefrontapi/useractions/eventinfo' | absolute_url }}",
+        async                   : true,
+        debug                   : false
+    });
+    {% endif %}
+}
+window.startRecordInteraction();
+```
+
+* * There are few types of user events we can collect: `Click`, `AddShopCart`, `RemoveShopCart`, `RecommendationClick`
+
+* To track a users interactions with an element, simply add the event keyword in CSS attribute of the element. Next block of code show how to collect `Click` events for the products:
+```html
+<a href="{{ product.url | absolute_url }}" class="product-grid-item Click" interactor-arg="{{ product.id }}">
+...
+```
+* * `Click` keyword should be placed in `class` attribute.
+* * Custom attribute `interactor-arg` contains product id that will be pass to the endpoint with other information.
+
+All user events will be collect locally and pass to the endpoint before user leaves the page.
+
