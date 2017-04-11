@@ -56,7 +56,7 @@ Automatically recommend items on your product page that are likely to be consume
 * Open template file where you want to display recommended products (ex. product.liquid)
 * Add snipped call with the following code:
 ```html
-{% include 'recommendations', provider: 'Cognitive', type: 'Recommendations', product_ids: product.id, take: 5 %}
+{% include 'recommendations', provider: 'Cognitive', type: 'User2Item', product_ids: product.id, take: 5 %}
 ```
 * * `provider` key can correspond to the following values:
 * * * `Cognitive` - provide a products from the Azure Machine Learning Service
