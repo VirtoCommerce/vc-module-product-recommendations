@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <module>
     <id>VirtoCommerce.ProductRecommendations</id>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <platformVersion>2.13.1</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.21.0" />
