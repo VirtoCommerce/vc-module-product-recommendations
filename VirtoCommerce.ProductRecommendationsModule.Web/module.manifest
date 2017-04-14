@@ -34,7 +34,7 @@
         <group name="Recommendations">
             <setting>
                 <name>Recommendations.ApiKey</name>
-                <valueType>string</valueType>
+                <valueType>securestring</valueType>
                 <title>Recommendations API Key</title>
                 <description>Microsoft Cognitive Services account key</description>
             </setting>

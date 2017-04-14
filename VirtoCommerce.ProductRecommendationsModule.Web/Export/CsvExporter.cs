@@ -52,7 +52,8 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
             {
                 progressInfo.Description = string.Format("{0} of {1} {2} processed", progressInfo.ProcessedCount, progressInfo.TotalCount, entitiesType);
                 progressCallback(progressInfo);
-            }).Throttle(TimeSpan.FromSeconds(1));
+            });
+            var updateProgressWithThrottling = updateProgress.Throttle(TimeSpan.FromSeconds(1));
 
             var relativeUrl = "temp/" + fileName + ".zip";
             using (var blobStream = _blobStorageProvider.OpenWrite(relativeUrl))
@@ -99,7 +100,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web.Export
                                         }
 
                                         progressInfo.ProcessedCount = index + 1;
-                                        updateProgress();
+                                        updateProgressWithThrottling();
                                     }
                                 }
                             }
