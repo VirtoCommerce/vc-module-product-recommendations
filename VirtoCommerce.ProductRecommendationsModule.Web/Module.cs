@@ -37,7 +37,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web
         {
             _container.RegisterType<IUsageEventRepository>(new InjectionFactory(c => new UsageEventRepository(ConnectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
             _container.RegisterType<IUsageEventService, UsageEventService>();
-            _container.RegisterType<IAzureRecommendationsClient, AzureRecommendationsClient>(new InjectionConstructor(ConfigurationManager.AppSettings.GetValue<string>("VirtoCommerce:ProductRecommendations:ApiKey", null)));
+            _container.RegisterType<IAzureRecommendationsClient, AzureRecommendationsClient>(new InjectionConstructor(ConfigurationManager.AppSettings.GetValue("VirtoCommerce:ProductRecommendations:ApiKey", string.Empty)));
             _container.RegisterType<IRecommendationsService, RecommendationsService>();
         }
 
