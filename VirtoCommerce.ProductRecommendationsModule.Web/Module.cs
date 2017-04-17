@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Configuration;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
@@ -34,7 +36,7 @@ namespace VirtoCommerce.ProductRecommendationsModule.Web
         {
             _container.RegisterType<IUsageEventRepository>(new InjectionFactory(c => new UsageEventRepository(ConnectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>())));
             _container.RegisterType<IUsageEventService, UsageEventService>();
-            _container.RegisterType<IAzureRecommendationsClient, AzureRecommendationsClient>();
+            _container.RegisterType<IAzureRecommendationsClient, AzureRecommendationsClient>(new InjectionConstructor(ConfigurationManager.AppSettings["VirtoCommerce:ProductRecommendations:ApiKey"]));
             _container.RegisterType<IRecommendationsService, RecommendationsService>();
         }
 

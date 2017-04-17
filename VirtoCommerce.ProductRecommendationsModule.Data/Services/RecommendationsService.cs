@@ -52,13 +52,6 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.Services
             var apiKey = store.Settings.GetSettingValue<string>("Recommendations.ApiKey", null);
             var baseUrl = store.Settings.GetSettingValue<string>("Recommendations.BaseUrl", null);
 
-            var exceptionFormat = "Recommendations API {0} must be provided.";
-
-            if (string.IsNullOrEmpty(apiKey))
-                throw new Exception(string.Format(exceptionFormat, "Key"));
-            if (string.IsNullOrEmpty(baseUrl))
-                throw new Exception(string.Format(exceptionFormat, "URL"));
-
             return new RecommendationServiceSettings(apiKey, baseUrl);
         }
     }

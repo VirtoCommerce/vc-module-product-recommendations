@@ -11,20 +11,36 @@ namespace VirtoCommerce.ProductRecommendationsModule.Data.AzureRecommendations
     {
         private const string UserToItemRecommendationsUrlFormat = "{0}/models/{1}/recommend/user?userId={2}&buildId={3}&numberOfResults={4}&itemsIds={5}";
         private const string DefaultRequestApiKeyHeader = "Ocp-Apim-Subscription-Key";
+        private const string ExceptionFormat = "Recommendations API {0} must be provided.";
+        private readonly string _apiKey;
+
+        public AzureRecommendationsClient(string apiKey)
+        {
+            _apiKey = apiKey;
+        }
 
         public async Task<string[]> GetCustomerRecommendationsAsync(string apiKey, string baseUrl, string modelId, string userId, string buildId, int numberOfResults, string[] productsIds)
         {
+            if (string.IsNullOrEmpty(baseUrl))
+                throw new Exception(string.Format(ExceptionFormat, "URL"));
+            if (string.IsNullOrEmpty(modelId))
+                throw new Exception(string.Format(ExceptionFormat, "Model ID"));
+
             return await GetRecommendatinsAsync(apiKey, string.Format(UserToItemRecommendationsUrlFormat,
                 baseUrl, modelId, userId, buildId, numberOfResults, productsIds != null ? string.Join(",", productsIds) : string.Empty));
         }
 
         private async Task<string[]> GetRecommendatinsAsync(string apiKey, string url)
         {
+            var apiKeyWithFallback = string.IsNullOrEmpty(apiKey) ? _apiKey : apiKey;
+            if (string.IsNullOrEmpty(apiKeyWithFallback))
+                throw new Exception(string.Format(ExceptionFormat, "Key"));
+
             var result = new List<string>();
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Clear();
-            httpClient.DefaultRequestHeaders.Add(DefaultRequestApiKeyHeader, apiKey);
+            httpClient.DefaultRequestHeaders.Add(DefaultRequestApiKeyHeader, apiKeyWithFallback);
 
             var response = await httpClient.GetAsync(url);
 
