@@ -56,12 +56,14 @@ Automatically recommend items on your product page that are likely to be consume
 * Open template file where you want to display recommended products (ex. product.liquid)
 * Add snipped call with the following code:
 ```html
-{% include 'recommendations', provider: 'Cognitive', type: 'User2Item', product_ids: product.id, take: 5 %}
+{% include 'recommendations', provider: 'Cognitive', type: 'User2Item', product_ids: product.id, modelId: '1c915305-ce4c-4b9c-8c9f-5ffaf8df05ab', take: 5 %}
 ```
 * * `provider` key can correspond to the following values:
 * * * `Cognitive` - provide a products from the Azure Machine Learning Service
 * * * `Association` - provide a products from associations lists, configured in Catalog module
 * * for the `product_ids` key we should set the current product id, or comma-separated identifiers in other cases. This is an optional parameter
+* * `modelId` - parameter represent Azure recommendation model identifier (required)
+* * `buildId` - parameter represent Azure recommendation model build identifier (optional)
 * * `take` key indicates the lenght of the result products list we want to receive
 
 2. User events gathering configuration for standard theme
