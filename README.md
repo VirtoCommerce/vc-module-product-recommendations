@@ -1,3 +1,7 @@
+<span style="color: red">!!! The module is deprecated !!!</span> 
+
+Please Migrate to [Build a real-time recommendation API on Azure](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/ai/real-time-recommendation).
+
 # Product recommendations built using Azure Machine Learning
 Product recommendations built using Azure Machine Learning. Automatically recommend items on your product page. Provide recommendations unique to customer and personalize their experience.
 
